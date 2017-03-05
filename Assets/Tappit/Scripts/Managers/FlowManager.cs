@@ -9,6 +9,7 @@ public class FlowManager : Kobapps.Singleton<FlowManager> {
     {
         Kobapps.SceneLoaderutil.LoadSceneAsync(GeneratedConstants.Scenes.MainMenuScene, () =>
         {
+			MenuScreensController.Instance.MainMenu();
 
         }, Kobapps.eSceneTransition.FadeOutFadeIn);
     }
@@ -17,6 +18,7 @@ public class FlowManager : Kobapps.Singleton<FlowManager> {
     {
         Kobapps.SceneLoaderutil.LoadSceneAsync(GeneratedConstants.Scenes.MainMenuScene, () =>
         {
+				MenuScreensController.Instance.LevelSelection();
 
         }, Kobapps.eSceneTransition.FadeOutFadeIn);
     }

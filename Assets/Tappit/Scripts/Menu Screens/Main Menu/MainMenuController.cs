@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuController : MonoBehaviour {
+public class MainMenuController : MenuScreenBaseController {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
 
+	#region Public
 
     public void PlayButtonAction()
     {
@@ -17,4 +13,7 @@ public class MainMenuController : MonoBehaviour {
 
         FlowManager.Instance.StartLevel(level);
     }
+
+	#endregion
+
 }
