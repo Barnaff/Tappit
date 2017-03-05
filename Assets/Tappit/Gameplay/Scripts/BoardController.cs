@@ -6,16 +6,20 @@ using UnityEngine;
 public class BoardController : MonoBehaviour {
 
 
-	#region Public
+    #region Public
+
+    public delegate void LevelCompleteDelegate();
 
 	public event TileCLickedDelegate OnTileClicked;
 
-	#endregion
+    public event LevelCompleteDelegate OnLevelComplete;
+
+    #endregion
 
 
-	#region Private properties
+    #region Private properties
 
-	[SerializeField]
+    [SerializeField]
 	private int _tilesOnScreen;
 
 	[SerializeField]
@@ -27,6 +31,12 @@ public class BoardController : MonoBehaviour {
 	[SerializeField]
 	private TileController[,] _boardTiles;
 
+    [SerializeField]
+    private LevelDefenition _currentLevel;
+
+    [SerializeField]
+    private bool _levelCompleted = false;
+
 
 	#endregion
 
@@ -34,11 +44,24 @@ public class BoardController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		BuildBoard();
+		//BuildBoard();
 	}
 	
 
 	#region Public
+
+    public void InitWithLevel(LevelDefenition level)
+    {
+        if (level == null)
+        {
+            Debug.LogError("ERROR - Level is null");
+        }
+        _currentLevel = level;
+        _boardSize = _currentLevel.BoardSize;
+
+        Reset();
+
+    }
 
 	public void Reset()
 	{
@@ -48,7 +71,6 @@ public class BoardController : MonoBehaviour {
 			{
 				Destroy(tileController.gameObject);
 			}
-
 		}
 
 		BuildBoard();
@@ -88,13 +110,19 @@ public class BoardController : MonoBehaviour {
 		{
 			for (int x=0; x< _boardSize.x; x++)
 			{
-				TileController tileController = CreateTile(x,y);
+                TileDefenition tileDefenition = null;
+                if (_currentLevel != null && _currentLevel.BoardSetup != null)
+                {
+                    tileDefenition = GetTileDefenition(new Vector2(x, y));
+                }
+
+                TileController tileController = CreateTile(x,y, tileDefenition);
 				_boardTiles[y,x] = tileController;
 			}
 		}
 	}
 
-	private TileController CreateTile(int x, int y)
+	private TileController CreateTile(int x, int y, TileDefenition tileDefenition)
 	{
 		TileController newTileController = Instantiate(_tilePrefab);
 
@@ -111,6 +139,10 @@ public class BoardController : MonoBehaviour {
 
 		newTileController.Position = new Vector2(x ,y);
 
+        if (tileDefenition != null && tileDefenition.IsFlipped)
+        {
+            newTileController.Flip(false);
+        }
 
 		return newTileController;
 	}
@@ -120,11 +152,11 @@ public class BoardController : MonoBehaviour {
 	{
 		List<TileController> adjacentTiles = GetAdjacentTIles(tileController.Position);
 
-		tileController.Flip();
+		tileController.Flip(true);
 
 		foreach (TileController adjacentTile in adjacentTiles)
 		{
-			adjacentTile.Flip();
+			adjacentTile.Flip(true);
 		}
 	}
 
@@ -162,6 +194,41 @@ public class BoardController : MonoBehaviour {
 		return adjacentTiles;
 	}
 
+    private TileDefenition GetTileDefenition(Vector2 tilePosition)
+    {
+        foreach (TileDefenition tileDefenition in _currentLevel.BoardSetup)
+        {
+            if (tileDefenition.Position == tilePosition)
+            {
+                return tileDefenition;
+            }
+        }
+
+        return null;
+    }
+
+    private bool IsLevelComplete
+    {
+        get
+        {
+            bool sucsess = true;
+            bool? lastTile = null;
+            foreach (TileController tileController in _boardTiles)
+            {
+                if (lastTile == null)
+                {
+                    lastTile = tileController.IsFlipped;
+                }
+                if (tileController.IsFlipped != lastTile)
+                {
+                    return false;
+                }
+            }
+
+            return sucsess;
+        }
+    }
+
 	#endregion
 
 
@@ -169,12 +236,21 @@ public class BoardController : MonoBehaviour {
 
 	private void OnTileCLickedHandler(TileController tileController)
 	{
-		FlipTile(tileController);
+        if (!_levelCompleted)
+        {
+            FlipTile(tileController);
 
-		if (OnTileClicked != null)
-		{
-			OnTileClicked(tileController);
-		}
+            if (OnTileClicked != null)
+            {
+                OnTileClicked(tileController);
+            }
+
+            if (IsLevelComplete && OnLevelComplete != null)
+            {
+                _levelCompleted = true;
+                OnLevelComplete();
+            }
+        }
 	}
 
 	#endregion

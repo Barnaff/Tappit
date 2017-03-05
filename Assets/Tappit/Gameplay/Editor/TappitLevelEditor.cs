@@ -15,6 +15,11 @@ public class TappitLevelEditor : EditorWindow {
 
 	private Vector2 _historyScrollPosition = Vector2.zero;
 
+    private Vector2 _levelsScrollPosition = Vector2.zero;
+
+    [SerializeField]
+    private LevelsSettigs _levelsSettings;
+
 	#endregion
 
 
@@ -30,103 +35,163 @@ public class TappitLevelEditor : EditorWindow {
 		if (_boardController == null)
 		{
 			_boardController = GameObject.FindObjectOfType<BoardController>();
-			_boardController.OnTileClicked += OnTileClickedHandler;
+            if (_boardController != null)
+            {
+                _boardController.OnTileClicked += OnTileClickedHandler;
+            }
 		}
 
-		if (_currentLevel == null)
-		{
-			_currentLevel = new LevelDefenition();
-		}
+        if (_levelsSettings == null)
+        {
+            _levelsSettings = LevelsSettigs.Instance;
+        }
+
 
 		if (_boardController != null)
 		{
-			GUILayout.BeginVertical("Box");
-			{
-				if (GUILayout.Button("Reset"))
-				{
-					_boardController.Reset();
-				}
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.BeginVertical("Box");
+                {
+                    if (GUILayout.Button("Add Level"))
+                    {
+                        _currentLevel = new LevelDefenition();
+                        _levelsSettings.Levels.Add(_currentLevel);
+                    }
+                        
 
-				if (GUILayout.Button("Start Record"))
-				{
+                    _levelsScrollPosition = GUILayout.BeginScrollView(_levelsScrollPosition);
+                    {
+                        GUILayout.BeginVertical();
+                        {
+                            foreach (LevelDefenition level in _levelsSettings.Levels)
+                            {
+                                GUILayout.BeginHorizontal("Box");
+                                {
+                                    if (GUILayout.Button(level.ChecpterID + "-" + level.LevelID))
+                                    {
+                                        _currentLevel = level;
+                                        if (_boardController != null)
+                                        {
+                                            _boardController.InitWithLevel(_currentLevel);
+                                        }
+                                    }
+                                    if (GUILayout.Button("X"))
+                                    {
+                                        _levelsSettings.Levels.Remove(level);
+                                        GUILayout.EndHorizontal();
+                                        break;
+                                    }
+                                }
+                                GUILayout.EndHorizontal();
+                            }
+                        }
+                        GUILayout.EndVertical();
 
-				}
-
-				if (GUILayout.Button("Export"))
-				{
-					ExportLevelLayout();
-				}
-
-				_boardController.BoardSize = EditorGUILayout.Vector2Field("Board Size", _boardController.BoardSize);
-				_currentLevel.BoardSize = _boardController.BoardSize;
-			}
-			GUILayout.EndVertical();
+                    }
+                    GUILayout.EndScrollView();
+                }
+                GUILayout.EndVertical();
 
 
-			GUILayout.BeginVertical("Box");
-			{
-				GUILayout.BeginHorizontal();
-				{
-					GUILayout.Label("History");
-					if (GUILayout.Button("Clear"))
-					{
-						_currentLevel.Steps.Clear();
-					}
-				}
-				GUILayout.EndHorizontal();
+                GUILayout.BeginVertical("Box");
+                {
+                    if (_currentLevel != null)
+                    {
+                        if (GUILayout.Button("Reset"))
+                        {
+                            _boardController.Reset();
+                        }
 
-				_historyScrollPosition = GUILayout.BeginScrollView(_historyScrollPosition);
-				{
-					GUILayout.BeginVertical();
-					{
-						if (_currentLevel.Steps == null)
-						{
-							_currentLevel.Steps = new List<Vector2>();
-						}
-						foreach (Vector2 historyEntry in _currentLevel.Steps)
-						{
-							if (GUILayout.Button(historyEntry.x + "," + historyEntry.y))
-							{
+                        if (GUILayout.Button("Start Record"))
+                        {
 
-							}
-						}
-					}
-					GUILayout.EndVertical();
-				}
-				GUILayout.EndScrollView();
+                        }
 
-			}
-			GUILayout.EndVertical();
+                        if (GUILayout.Button("Export"))
+                        {
+                            ExportLevelLayout();
+                        }
 
+                        GUILayout.BeginHorizontal();
+                        {
+                            _currentLevel.ChecpterID = EditorGUILayout.IntField( _currentLevel.ChecpterID);
+                            GUILayout.Label("-");
+                            _currentLevel.LevelID = EditorGUILayout.IntField(_currentLevel.LevelID);
+                        }
+                        GUILayout.EndHorizontal();
+                       
+
+                        _boardController.BoardSize = EditorGUILayout.Vector2Field("Board Size", _boardController.BoardSize);
+                        _currentLevel.BoardSize = _boardController.BoardSize;
+
+
+                        GUILayout.BeginVertical("Box");
+                        {
+                            GUILayout.BeginHorizontal();
+                            {
+                                GUILayout.Label("History");
+                                if (GUILayout.Button("Clear"))
+                                {
+                                    _currentLevel.Steps.Clear();
+                                }
+                            }
+                            GUILayout.EndHorizontal();
+
+                            _historyScrollPosition = GUILayout.BeginScrollView(_historyScrollPosition);
+                            {
+                                GUILayout.BeginVertical();
+                                {
+                                    if (_currentLevel.Steps == null)
+                                    {
+                                        _currentLevel.Steps = new List<Vector2>();
+                                    }
+                                    foreach (Vector2 historyEntry in _currentLevel.Steps)
+                                    {
+                                        if (GUILayout.Button(historyEntry.x + "," + historyEntry.y))
+                                        {
+
+                                        }
+                                    }
+                                }
+                                GUILayout.EndVertical();
+                            }
+                            GUILayout.EndScrollView();
+                        }
+                        GUILayout.EndVertical();
+
+                    }
+                    GUILayout.EndVertical();
+                }
+
+
+            }
+            GUILayout.EndHorizontal();
+
+            EditorUtility.SetDirty(_levelsSettings);
 		}
 	}
 
 	private void ExportLevelLayout()
 	{
-		if (_currentLevel != null)
-		{
-			_currentLevel.StartingPosition = new int[(int)_currentLevel.BoardSize.x,(int)_currentLevel.BoardSize.y];
-			for (int y = 0; y < _currentLevel.BoardSize.y; y++)
-			{
-				for (int x = 0; x < _currentLevel.BoardSize.x; x++)
-				{
-					_currentLevel.StartingPosition[y,x] = _boardController.BoardTiles[y,x].IsFlipped ? 1 : 0;
-				}
-			}
-		}
+        List<TileDefenition> tiles = new List<TileDefenition>();
 
-		string output = "";
-		for (int y = 0; y < _currentLevel.BoardSize.y; y++)
-		{
-			for (int x = 0; x < _currentLevel.BoardSize.x; x++)
-			{
-				output += _currentLevel.StartingPosition[y,x].ToString();
-			}
-			output += "\n";
-		}
+        for (int y = 0; y < _currentLevel.BoardSize.y; y++)
+        {
+            for (int x = 0; x < _currentLevel.BoardSize.x; x++)
+            {
+                TileDefenition tileDefenition = new TileDefenition();
+                tileDefenition.Position = new Vector2(x, y);
+                tileDefenition.IsFlipped = _boardController.BoardTiles[y, x].IsFlipped;
 
-		Debug.Log(output);
-	}
+                tiles.Add(tileDefenition);
+            }
+        }
+
+        _currentLevel.BoardSetup = tiles;
+
+        EditorUtility.SetDirty(_levelsSettings);
+    }
 
 	#region Events
 
@@ -135,7 +200,9 @@ public class TappitLevelEditor : EditorWindow {
 		if (_currentLevel != null)
 		{
 			_currentLevel.Steps.Add(tileController.Position);
-			Repaint();
+            ExportLevelLayout();
+
+            Repaint();
 		}
 	}
 

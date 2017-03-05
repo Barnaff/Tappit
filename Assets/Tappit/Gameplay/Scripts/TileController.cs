@@ -27,19 +27,22 @@ public class TileController : MonoBehaviour {
 
 	#region Public
 
-	public void Flip()
+	public void Flip(bool animated)
 	{
-		Vector3 rotation = this.transform.rotation.eulerAngles;
-		//rotation.y += 180f;
-
-		this.transform.rotation = Quaternion.Euler(rotation);
-
 		_isFlipped = !_isFlipped;
 
-
-		this.transform.DOMoveZ(Random.Range(-1.5f, -3f), 0.3f).SetLoops(2,LoopType.Yoyo).SetRelative();
-
-		this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(Random.Range(0.2f, 0.3f));
+        if (animated)
+        {
+            this.transform.DOMoveZ(Random.Range(-1.5f, -3f), 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative();
+            this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(Random.Range(0.2f, 0.3f));
+        }
+        else
+        {
+            Vector3 rotation = this.transform.rotation.eulerAngles;
+            rotation.y += 180f;
+            this.transform.rotation = Quaternion.Euler(rotation);
+        }
+		
 	}
 
 	public bool IsFlipped
