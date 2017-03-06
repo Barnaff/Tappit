@@ -67,11 +67,30 @@ public class LevelSelectionController : MenuScreenBaseController {
         {
             for (int x = 0; x < _rowWidth; x++)
             {
-                LevelTileController tile = CreateTile(x, y, levels[count]);
+                //LevelTileController tile = CreateTile(x, y, levels[count]);
+				LevelTileController tile = CreateTile(levels[count]);
                 count++;
             }
         }
     }
+
+
+	private LevelTileController CreateTile(LevelDefenition levelDefenition)
+	{
+		LevelTileController newTile = Instantiate(_levelTilePrefab);
+
+		newTile.gameObject.SetActive(true);
+
+		newTile.transform.SetParent(_levelsTilesContent);
+
+		newTile.transform.localScale = Vector3.one;
+
+		newTile.SetLevel(levelDefenition);
+
+		newTile.OnLevelTileSelected += LevelTileSelectedHandler;
+
+		return newTile;
+	}
 
     private LevelTileController CreateTile(int x, int y, LevelDefenition levelDefenition)
     {

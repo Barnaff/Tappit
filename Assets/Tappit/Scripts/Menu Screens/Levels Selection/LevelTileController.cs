@@ -18,7 +18,7 @@ public class LevelTileController : MonoBehaviour {
     #region Private Properties
 
     [SerializeField]
-    private TextMeshPro _levelLabel;
+	private TextMeshProUGUI _levelLabel;
 
     [SerializeField]
     private LevelDefenition _levelDefenition;
@@ -45,18 +45,14 @@ public class LevelTileController : MonoBehaviour {
         }
     }
 
-    #endregion
 
-
-    #region Events
-
-    void OnMouseDown()
-    {
-        if (OnLevelTileSelected != null)
-        {
-            OnLevelTileSelected(this);
-        }
-    }
+	public void TileClikcAction()
+	{
+		if (OnLevelTileSelected != null)
+		{
+			OnLevelTileSelected(this);
+		}
+	}
 
     #endregion
 
