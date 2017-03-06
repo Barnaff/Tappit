@@ -17,11 +17,15 @@ public class LevelCompletedPopupController : PopupBaseController {
     public void MenuButtonAction()
     {
         FlowManager.Instance.LevelsSelectionScreen();
+
+        ClosePopup();
     }
 
     public void PlayAgainButtonAction()
     {
         FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+
+        ClosePopup();
     }
 
     #endregion

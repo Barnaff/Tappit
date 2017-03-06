@@ -19,9 +19,6 @@ public class BoardController : MonoBehaviour {
 
     #region Private properties
 
-    [SerializeField]
-	private int _tilesOnScreen;
-
 	[SerializeField]
 	private Vector2 _boardSize;
 
@@ -37,15 +34,19 @@ public class BoardController : MonoBehaviour {
     [SerializeField]
     private bool _levelCompleted = false;
 
+    [SerializeField]
+    private Vector2 _screenSize;
 
-	#endregion
+    #endregion
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
-		//BuildBoard();
-	}
+       
+
+        //BuildBoard();
+    }
 	
 
 	#region Public
@@ -58,6 +59,9 @@ public class BoardController : MonoBehaviour {
         }
         _currentLevel = level;
         _boardSize = _currentLevel.BoardSize;
+
+        Vector3 corner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
+        _screenSize = new Vector2(corner.x * 2, corner.y * 2);
 
         Reset();
 
@@ -128,7 +132,7 @@ public class BoardController : MonoBehaviour {
 
 		newTileController.transform.SetParent(this.transform);
 
-		float tileScale = _tilesOnScreen / _boardSize.x;
+		float tileScale = _screenSize.x * 0.8f / _boardSize.x;
 
 		newTileController.transform.localScale = Vector3.one * tileScale;
 

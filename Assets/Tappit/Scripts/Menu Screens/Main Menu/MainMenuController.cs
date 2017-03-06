@@ -11,7 +11,8 @@ public class MainMenuController : MenuScreenBaseController {
     {
         LevelDefenition level = LevelsSettigs.Instance.Levels[0];
 
-        FlowManager.Instance.StartLevel(level);
+        MenuScreensController.Instance.LevelSelection();
+
     }
 
 	#endregion
