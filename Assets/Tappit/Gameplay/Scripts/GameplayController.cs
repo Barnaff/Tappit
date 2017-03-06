@@ -12,6 +12,9 @@ public class GameplayController : MonoBehaviour {
     [SerializeField]
     private BoardController _boardController;
 
+	[SerializeField]
+	private GameplayUIController _gameplayUI;
+
     #endregion
 
     // Use this for initialization
@@ -25,9 +28,17 @@ public class GameplayController : MonoBehaviour {
             Debug.LogError("ERROR - Cannot find board controller in scene!");
         }
 
+		_gameplayUI = GameObject.FindObjectOfType<GameplayUIController>();
+		if (_gameplayUI == null)
+		{
+			Debug.LogError("ERROR - Cannot find gameplay UI in scene!");
+		}
+
         _boardController.InitWithLevel(_selectedLevel);
         _boardController.OnLevelComplete += OnLevelCompleteHandler;
 
+
+		_gameplayUI.SetLevel(_selectedLevel);
     }
 
 
