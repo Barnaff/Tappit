@@ -41,9 +41,10 @@ public class GameplayController : MonoBehaviour {
 
         _boardController.InitWithLevel(_selectedLevel);
         _boardController.OnLevelComplete += OnLevelCompleteHandler;
-        _boardController.OnTileClicked += OnTIleClickedHandler;
+        _boardController.OnTileClicked += OnTileClickedHandler;
 
         _gameplayUI.SetLevel(_selectedLevel);
+        _gameplayUI.UpdateMovesCount(_movesCount);
     }
 
 
@@ -56,7 +57,8 @@ public class GameplayController : MonoBehaviour {
         _gameplayUI.gameObject.SetActive(false);
         _boardController.gameObject.SetActive(false);
 
-        PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
+        LevelCompletedPopupController levelCompletionPopup = PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
+        levelCompletionPopup.SetMovesCount(_movesCount);
     }
 
     #endregion
@@ -69,11 +71,11 @@ public class GameplayController : MonoBehaviour {
         StartCoroutine(FinishedGameSequance());
     }
 
-    private void OnTIleClickedHandler(TileController tileController)
+    private void OnTileClickedHandler(TileController tileController)
     {
         _movesCount++;
 
-        _gameplayUI.SetMovesCount(_movesCount);
+        _gameplayUI.UpdateMovesCount(_movesCount);
     }
 
     #endregion

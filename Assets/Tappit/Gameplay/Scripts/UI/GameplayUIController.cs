@@ -16,7 +16,6 @@ public class GameplayUIController : MonoBehaviour {
     [SerializeField]
     private StarsPanelController _starsController;
 
-
 	#endregion
 
 
@@ -27,12 +26,15 @@ public class GameplayUIController : MonoBehaviour {
 		_levelLabel.text = levelDefenition.ChecpterID.ToString() + " - " + levelDefenition.LevelID.ToString();
 	}
 
-    public void SetMovesCount(int movesCount)
+    public void UpdateMovesCount(int movesCount)
     {
-        _movesLabel.text = movesCount.ToString();
+        int movesLeft = MovesLeft(movesCount);
+
+        _movesLabel.text = movesLeft.ToString();
+
     }
 
-	public void BackButtonAction()
+    public void BackButtonAction()
 	{
 		FlowManager.Instance.LevelsSelectionScreen();
 	}
@@ -47,5 +49,33 @@ public class GameplayUIController : MonoBehaviour {
 
 	}
 
-	#endregion
+    #endregion
+
+
+    #region Private
+
+    private int MovesLeft(int movesCount)
+    {
+        LevelDefenition currentLevel = GameSetupManager.Instance.SelectedLevel;
+        int movesLeft = 0;
+        if (movesCount <= currentLevel.Stars3Steps)
+        {
+            movesLeft = currentLevel.Stars3Steps - movesCount;
+            _starsController.SetStars(3);
+        }
+        else if (movesCount <= currentLevel.Stars2Steps)
+        {
+            movesLeft = currentLevel.Stars2Steps - movesCount;
+            _starsController.SetStars(2);
+        }
+        else if (movesCount <= currentLevel.Stars1Steps)
+        {
+            movesLeft = currentLevel.Stars1Steps - movesCount;
+            _starsController.SetStars(1);
+        }
+        return movesLeft;
+    }
+
+    #endregion
+
 }
