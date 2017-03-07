@@ -80,6 +80,7 @@ public class BoardController : MonoBehaviour {
 		BuildBoard();
 	}
 
+
 	public Vector2 BoardSize
 	{
 		get

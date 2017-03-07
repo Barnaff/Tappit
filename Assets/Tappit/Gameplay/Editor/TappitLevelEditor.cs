@@ -20,6 +20,9 @@ public class TappitLevelEditor : EditorWindow {
     [SerializeField]
     private LevelsSettigs _levelsSettings;
 
+    [SerializeField]
+    private bool _isRecording = false;
+
 	#endregion
 
 
@@ -66,6 +69,15 @@ public class TappitLevelEditor : EditorWindow {
                         {
                             foreach (LevelDefenition level in _levelsSettings.Levels)
                             {
+                                if (level == _currentLevel)
+                                {
+                                    GUI.color = Color.green;
+                                }
+                                else
+                                {
+                                    GUI.color = Color.white;
+                                }
+
                                 GUILayout.BeginHorizontal("Box");
                                 {
                                     if (GUILayout.Button(level.ChecpterID + "-" + level.LevelID))
@@ -100,13 +112,20 @@ public class TappitLevelEditor : EditorWindow {
                     {
                         if (GUILayout.Button("Reset"))
                         {
-                            _boardController.Reset();
+                            _boardController.InitWithLevel(_currentLevel);
                         }
 
-                        if (GUILayout.Button("Start Record"))
+                        if (GUILayout.Button("Clear Board"))
                         {
-
+                            foreach (TileDefenition tiledefenition in _currentLevel.BoardSetup)
+                            {
+                                tiledefenition.IsFlipped = false;
+                            }
+                            _currentLevel.Steps.Clear();
+                            _boardController.InitWithLevel(_currentLevel);
                         }
+
+                        _isRecording = EditorGUILayout.Toggle("Record", _isRecording, "Button");
 
                         if (GUILayout.Button("Export"))
                         {
@@ -120,7 +139,21 @@ public class TappitLevelEditor : EditorWindow {
                             _currentLevel.LevelID = EditorGUILayout.IntField(_currentLevel.LevelID);
                         }
                         GUILayout.EndHorizontal();
-                       
+
+                        GUILayout.BeginVertical("Box");
+                        {
+                            GUILayout.Label("Stars");
+
+                            GUILayout.BeginHorizontal();
+                            {
+                                _currentLevel.Stars1Steps = EditorGUILayout.IntField(_currentLevel.Stars1Steps);
+                                _currentLevel.Stars2Steps = EditorGUILayout.IntField(_currentLevel.Stars2Steps);
+                                _currentLevel.Stars3Steps = EditorGUILayout.IntField(_currentLevel.Stars3Steps);
+
+                            }
+                            GUILayout.EndHorizontal();
+                        }
+                        GUILayout.EndVertical();
 
                         _boardController.BoardSize = EditorGUILayout.Vector2Field("Board Size", _boardController.BoardSize);
                         _currentLevel.BoardSize = _boardController.BoardSize;
@@ -193,15 +226,24 @@ public class TappitLevelEditor : EditorWindow {
         EditorUtility.SetDirty(_levelsSettings);
     }
 
+    private void UpdateStarsCount()
+    {
+        int movesCount = _currentLevel.Steps.Count;
+
+        _currentLevel.Stars3Steps = movesCount;
+        _currentLevel.Stars2Steps = Mathf.RoundToInt(movesCount * 1.8f);
+        _currentLevel.Stars1Steps = _currentLevel.Stars2Steps + movesCount;
+    }
+
 	#region Events
 
 	private void OnTileClickedHandler(TileController tileController)
 	{
-		if (_currentLevel != null)
+		if (_currentLevel != null  && _isRecording)
 		{
 			_currentLevel.Steps.Add(tileController.Position);
             ExportLevelLayout();
-
+            UpdateStarsCount();
             Repaint();
 		}
 	}

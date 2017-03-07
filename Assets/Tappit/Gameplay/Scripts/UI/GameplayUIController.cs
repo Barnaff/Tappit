@@ -8,7 +8,13 @@ public class GameplayUIController : MonoBehaviour {
 	#region Public Properties
 
 	[SerializeField]
-	public TextMeshProUGUI _levelLabel;
+    private TextMeshProUGUI _levelLabel;
+
+    [SerializeField]
+    private TextMeshProUGUI _movesLabel;
+
+    [SerializeField]
+    private StarsPanelController _starsController;
 
 
 	#endregion
@@ -20,6 +26,11 @@ public class GameplayUIController : MonoBehaviour {
 	{
 		_levelLabel.text = levelDefenition.ChecpterID.ToString() + " - " + levelDefenition.LevelID.ToString();
 	}
+
+    public void SetMovesCount(int movesCount)
+    {
+        _movesLabel.text = movesCount.ToString();
+    }
 
 	public void BackButtonAction()
 	{
