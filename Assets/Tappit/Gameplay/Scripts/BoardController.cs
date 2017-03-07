@@ -8,11 +8,7 @@ public class BoardController : MonoBehaviour {
 
     #region Public
 
-    public delegate void LevelCompleteDelegate();
-
 	public event TileCLickedDelegate OnTileClicked;
-
-    public event LevelCompleteDelegate OnLevelComplete;
 
     #endregion
 
@@ -32,21 +28,10 @@ public class BoardController : MonoBehaviour {
     private LevelDefenition _currentLevel;
 
     [SerializeField]
-    private bool _levelCompleted = false;
-
-    [SerializeField]
     private Vector2 _screenSize;
 
     #endregion
 
-
-    // Use this for initialization
-    void Start () {
-
-       
-
-        //BuildBoard();
-    }
 	
 
 	#region Public
@@ -100,6 +85,29 @@ public class BoardController : MonoBehaviour {
 			return _boardTiles;
 		}
 	}
+
+	public bool IsLevelComplete
+	{
+		get
+		{
+			bool sucsess = true;
+			bool? lastTile = null;
+			foreach (TileController tileController in _boardTiles)
+			{
+				if (lastTile == null)
+				{
+					lastTile = tileController.IsFlipped;
+				}
+				if (tileController.IsFlipped != lastTile)
+				{
+					return false;
+				}
+			}
+
+			return sucsess;
+		}
+	}
+
 
 	#endregion
 
@@ -211,29 +219,7 @@ public class BoardController : MonoBehaviour {
 
         return null;
     }
-
-    private bool IsLevelComplete
-    {
-        get
-        {
-            bool sucsess = true;
-            bool? lastTile = null;
-            foreach (TileController tileController in _boardTiles)
-            {
-                if (lastTile == null)
-                {
-                    lastTile = tileController.IsFlipped;
-                }
-                if (tileController.IsFlipped != lastTile)
-                {
-                    return false;
-                }
-            }
-
-            return sucsess;
-        }
-    }
-
+		
 	#endregion
 
 
@@ -241,21 +227,12 @@ public class BoardController : MonoBehaviour {
 
 	private void OnTileCLickedHandler(TileController tileController)
 	{
-        if (!_levelCompleted)
-        {
-            FlipTile(tileController);
+		FlipTile(tileController);
 
-            if (OnTileClicked != null)
-            {
-                OnTileClicked(tileController);
-            }
-
-            if (IsLevelComplete && OnLevelComplete != null)
-            {
-                _levelCompleted = true;
-                OnLevelComplete();
-            }
-        }
+		if (OnTileClicked != null)
+		{
+			OnTileClicked(tileController);
+		}
 	}
 
 	#endregion

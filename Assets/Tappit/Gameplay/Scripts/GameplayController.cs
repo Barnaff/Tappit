@@ -40,7 +40,6 @@ public class GameplayController : MonoBehaviour {
 		}
 
         _boardController.InitWithLevel(_selectedLevel);
-        _boardController.OnLevelComplete += OnLevelCompleteHandler;
         _boardController.OnTileClicked += OnTileClickedHandler;
 
         _gameplayUI.SetLevel(_selectedLevel);
@@ -52,6 +51,8 @@ public class GameplayController : MonoBehaviour {
 
     private IEnumerator FinishedGameSequance()
     {
+		_levelCompleted = true;
+
         yield return new WaitForSeconds(1.0f);
 
         _gameplayUI.gameObject.SetActive(false);
@@ -61,21 +62,54 @@ public class GameplayController : MonoBehaviour {
         levelCompletionPopup.SetMovesCount(_movesCount);
     }
 
+	private IEnumerator LevelFailedSequance()
+	{
+		_levelCompleted = true;
+
+		yield return new WaitForSeconds(1.0f);
+
+		_gameplayUI.gameObject.SetActive(false);
+		_boardController.gameObject.SetActive(false);
+
+		LevelFailedPopupController levelFailedPopup = PopupsManager.Instance.DisplayPopup<LevelFailedPopupController>();
+	}
+
+	private void LevelFinished()
+	{
+		if (!_levelCompleted)
+		{
+			StartCoroutine(FinishedGameSequance());
+		}
+	}
+
+	private void LevelFailed()
+	{
+		if (!_levelCompleted)
+		{
+			StartCoroutine(LevelFailedSequance());
+		}
+	}
+
     #endregion
 
 
     #region Events
-
-    private void OnLevelCompleteHandler()
-    {
-        StartCoroutine(FinishedGameSequance());
-    }
 
     private void OnTileClickedHandler(TileController tileController)
     {
         _movesCount++;
 
         _gameplayUI.UpdateMovesCount(_movesCount);
+
+		if (_boardController.IsLevelComplete)
+		{
+			LevelFinished();
+		}
+
+		if (_movesCount > _selectedLevel.Stars1Steps)
+		{
+			LevelFailed();
+		}
     }
 
     #endregion
