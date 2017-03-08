@@ -46,8 +46,9 @@ public class GameplayUIController : MonoBehaviour {
 
 	public void HintButtonAction()
 	{
-
-	}
+        GameSetupManager.Instance.UseHint = true;
+        FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+    }
 
     #endregion
 

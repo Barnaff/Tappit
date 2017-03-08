@@ -27,22 +27,9 @@ public class TileController : MonoBehaviour {
 
 	#region Public
 
-	public void Flip(bool animated)
+	public void Flip(bool animated, System.Action completionAction)
 	{
-		_isFlipped = !_isFlipped;
-
-        if (animated)
-        {
-            this.transform.DOMoveZ(Random.Range(-1.5f, -3f), 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative();
-            this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(Random.Range(0.2f, 0.3f));
-        }
-        else
-        {
-            Vector3 rotation = this.transform.rotation.eulerAngles;
-            rotation.y += 180f;
-            this.transform.rotation = Quaternion.Euler(rotation);
-        }
-		
+        StartCoroutine(FlipTileCorutine(animated, completionAction)); 
 	}
 
 	public bool IsFlipped
@@ -66,5 +53,35 @@ public class TileController : MonoBehaviour {
 		}
 	}
 
-	#endregion
+    #endregion
+
+
+    #region Private
+
+    private IEnumerator FlipTileCorutine(bool animated, System.Action completionAction)
+    {
+        _isFlipped = !_isFlipped;
+
+        if (animated)
+        {
+            this.transform.DOMoveZ(Random.Range(-1.5f, -3f), 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative();
+            this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(Random.Range(0.2f, 0.3f));
+
+            yield return new WaitForSeconds(0.7f);
+        }
+        else
+        {
+            Vector3 rotation = this.transform.rotation.eulerAngles;
+            rotation.y += 180f;
+            this.transform.rotation = Quaternion.Euler(rotation);
+        }
+
+        if (completionAction != null)
+        {
+            completionAction();
+        }
+
+    }
+
+    #endregion
 }

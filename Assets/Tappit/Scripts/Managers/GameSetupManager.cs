@@ -9,6 +9,9 @@ public class GameSetupManager : Kobapps.Singleton<GameSetupManager> {
     [SerializeField]
     private  LevelDefenition _selectedLevel;
 
+    [SerializeField]
+    private bool _useHint;
+
     #endregion
 
 
@@ -23,6 +26,18 @@ public class GameSetupManager : Kobapps.Singleton<GameSetupManager> {
         set
         {
             _selectedLevel = value;
+        }
+    }
+
+    public bool UseHint
+    {
+        get
+        {
+            return _useHint;
+        }
+        set
+        {
+            _useHint = value;
         }
     }
 

@@ -30,6 +30,9 @@ public class BoardController : MonoBehaviour {
     [SerializeField]
     private Vector2 _screenSize;
 
+    [SerializeField]
+    private bool _isFlipping = false;
+
     #endregion
 
 	
@@ -108,14 +111,39 @@ public class BoardController : MonoBehaviour {
 		}
 	}
 
+    public void FlipTile(TileController tileController)
+    {
+        if (!_isFlipping)
+        {
+            _isFlipping = true;
 
-	#endregion
+            List<TileController> adjacentTiles = GetAdjacentTIles(tileController.Position);
+
+            tileController.Flip(true, () =>
+            {
+                _isFlipping = false;
+            });
+
+            foreach (TileController adjacentTile in adjacentTiles)
+            {
+                adjacentTile.Flip(true, null);
+            }
+        }
+    }
+
+    public Vector2 GetPositionForTileAtIndex(Vector2 tileIndex)
+    {
+        return _boardTiles[(int)tileIndex.y, (int)tileIndex.x].transform.position;
+    }
+
+
+    #endregion
 
 
 
-	#region Private
+    #region Private
 
-	private void BuildBoard()
+    private void BuildBoard()
 	{
 		_boardTiles = new TileController[(int)_boardSize.y , (int)_boardSize.x];
 
@@ -154,24 +182,12 @@ public class BoardController : MonoBehaviour {
 
         if (tileDefenition != null && tileDefenition.IsFlipped)
         {
-            newTileController.Flip(false);
+            newTileController.Flip(false, null);
         }
 
 		return newTileController;
 	}
 
-
-	private void FlipTile(TileController tileController)
-	{
-		List<TileController> adjacentTiles = GetAdjacentTIles(tileController.Position);
-
-		tileController.Flip(true);
-
-		foreach (TileController adjacentTile in adjacentTiles)
-		{
-			adjacentTile.Flip(true);
-		}
-	}
 
 	private List<TileController> GetAdjacentTIles(Vector2 position)
 	{
@@ -227,7 +243,7 @@ public class BoardController : MonoBehaviour {
 
 	private void OnTileCLickedHandler(TileController tileController)
 	{
-		FlipTile(tileController);
+		//FlipTile(tileController);
 
 		if (OnTileClicked != null)
 		{

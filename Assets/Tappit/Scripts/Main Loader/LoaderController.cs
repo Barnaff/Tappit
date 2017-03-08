@@ -17,6 +17,10 @@ public class LoaderController : MonoBehaviour {
     {
         yield return 0f;
 
+        AccountManager.Instance.Init();
+
+        yield return 0f;
+
         FlowManager.Instance.FirstScreen();
     }
 

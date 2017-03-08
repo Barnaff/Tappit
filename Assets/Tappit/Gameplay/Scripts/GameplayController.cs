@@ -18,7 +18,16 @@ public class GameplayController : MonoBehaviour {
     [SerializeField]
     private int _movesCount = 0;
 
+    [SerializeField]
     private bool _levelCompleted = false;
+
+    [SerializeField]
+    private bool _useHints = false;
+
+    [SerializeField]
+    private GameObject _hintPrefab;
+
+    private GameObject _hintIndicator = null;
 
     #endregion
 
@@ -44,6 +53,15 @@ public class GameplayController : MonoBehaviour {
 
         _gameplayUI.SetLevel(_selectedLevel);
         _gameplayUI.UpdateMovesCount(_movesCount);
+
+
+        if (GameSetupManager.Instance.UseHint)
+        {
+            _useHints = true;
+            ShowNextHint();
+
+            GameSetupManager.Instance.UseHint = false;
+        }
     }
 
 
@@ -55,11 +73,11 @@ public class GameplayController : MonoBehaviour {
 
         yield return new WaitForSeconds(1.0f);
 
-        _gameplayUI.gameObject.SetActive(false);
-        _boardController.gameObject.SetActive(false);
+        yield return StartCoroutine(ClearGameplayContents());
 
         LevelCompletedPopupController levelCompletionPopup = PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
         levelCompletionPopup.SetMovesCount(_movesCount);
+
     }
 
 	private IEnumerator LevelFailedSequance()
@@ -68,11 +86,24 @@ public class GameplayController : MonoBehaviour {
 
 		yield return new WaitForSeconds(1.0f);
 
-		_gameplayUI.gameObject.SetActive(false);
-		_boardController.gameObject.SetActive(false);
+        yield return StartCoroutine(ClearGameplayContents());
 
 		LevelFailedPopupController levelFailedPopup = PopupsManager.Instance.DisplayPopup<LevelFailedPopupController>();
 	}
+
+    private IEnumerator ClearGameplayContents()
+    {
+        _gameplayUI.gameObject.SetActive(false);
+        _boardController.gameObject.SetActive(false);
+
+        if (_hintIndicator != null)
+        {
+            Destroy(_hintIndicator);
+            _hintIndicator = null;
+        }
+
+        yield return null;
+    }
 
 	private void LevelFinished()
 	{
@@ -90,6 +121,26 @@ public class GameplayController : MonoBehaviour {
 		}
 	}
 
+    private void ShowNextHint()
+    {
+        if (_selectedLevel.Steps.Count > _movesCount)
+        {
+            Vector2 hintIndex = _selectedLevel.Steps[_movesCount];
+
+            if (_hintIndicator == null)
+            {
+                _hintIndicator = Instantiate(_hintPrefab) as GameObject;
+            }
+
+            Vector3 tilePosition = _boardController.GetPositionForTileAtIndex(hintIndex);
+
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(tilePosition);
+            tilePosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 8f));
+
+            _hintIndicator.transform.position = tilePosition;
+        }
+    }
+
     #endregion
 
 
@@ -97,19 +148,43 @@ public class GameplayController : MonoBehaviour {
 
     private void OnTileClickedHandler(TileController tileController)
     {
-        _movesCount++;
 
-        _gameplayUI.UpdateMovesCount(_movesCount);
+        bool canFlip = true;
 
-		if (_boardController.IsLevelComplete)
-		{
-			LevelFinished();
-		}
+        if (_useHints)
+        {
+            Vector2 hintIndex = _selectedLevel.Steps[_movesCount];
+            if (tileController.Position != hintIndex)
+            {
+                canFlip = false;
 
-		if (_movesCount > _selectedLevel.Stars1Steps)
-		{
-			LevelFailed();
-		}
+                
+            }
+        }
+
+        if (canFlip)
+        {
+            _movesCount++;
+
+            _gameplayUI.UpdateMovesCount(_movesCount);
+
+            _boardController.FlipTile(tileController);
+
+            if (_boardController.IsLevelComplete)
+            {
+                LevelFinished();
+            }
+
+            if (_movesCount > _selectedLevel.Stars1Steps)
+            {
+                LevelFailed();
+            }
+
+            if (_useHints)
+            {
+                ShowNextHint();
+            }
+        }
     }
 
     #endregion

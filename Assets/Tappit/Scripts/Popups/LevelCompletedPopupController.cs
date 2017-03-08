@@ -71,6 +71,8 @@ public class LevelCompletedPopupController : PopupBaseController {
                 _starsImages[i].sprite = _emptyStarSprite;
             }
         }
+
+        AccountManager.Instance.UpdateLevelStars(currentLevel, starCount);
     }
 
     #endregion
