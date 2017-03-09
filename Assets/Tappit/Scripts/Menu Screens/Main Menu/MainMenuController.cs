@@ -9,10 +9,7 @@ public class MainMenuController : MenuScreenBaseController {
 
     public void PlayButtonAction()
     {
-        LevelDefenition level = LevelsSettigs.Instance.Levels[0];
-
         MenuScreensController.Instance.LevelSelection();
-
     }
 
 	#endregion

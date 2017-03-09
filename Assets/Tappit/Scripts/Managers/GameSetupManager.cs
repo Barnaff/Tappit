@@ -10,6 +10,9 @@ public class GameSetupManager : Kobapps.Singleton<GameSetupManager> {
     private  LevelDefenition _selectedLevel;
 
     [SerializeField]
+    private ChepterDefenition _currentChepter;
+
+    [SerializeField]
     private bool _useHint;
 
     #endregion
@@ -26,6 +29,18 @@ public class GameSetupManager : Kobapps.Singleton<GameSetupManager> {
         set
         {
             _selectedLevel = value;
+        }
+    }
+
+    public ChepterDefenition CurrentChepter
+    {
+        get
+        {
+            return _currentChepter;
+        }
+        set
+        {
+            _currentChepter = value;
         }
     }
 

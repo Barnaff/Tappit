@@ -46,7 +46,11 @@ public class BoardController : MonoBehaviour {
             Debug.LogError("ERROR - Level is null");
         }
         _currentLevel = level;
-        _boardSize = _currentLevel.BoardSize;
+        if (_currentLevel != null)
+        {
+            _boardSize = _currentLevel.BoardSize;
+        }
+       
 
         Vector3 corner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
         _screenSize = new Vector2(corner.x * 2, corner.y * 2);
@@ -61,7 +65,10 @@ public class BoardController : MonoBehaviour {
 		{
 			foreach (TileController tileController in _boardTiles)
 			{
-				Destroy(tileController.gameObject);
+                if (tileController != null && tileController.gameObject != null)
+                {
+                    Destroy(tileController.gameObject);
+                }
 			}
 		}
 

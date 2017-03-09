@@ -24,6 +24,9 @@ public class LevelSelectionController : MenuScreenBaseController {
     [SerializeField]
     private Vector3 _screenSize;
 
+    [SerializeField]
+    private int _currentChepterIndex;
+
     #endregion
 
 
@@ -61,7 +64,9 @@ public class LevelSelectionController : MenuScreenBaseController {
 
     private void GenerateLevelTiles()
     {
-        List<LevelDefenition> levels = LevelsSettigs.Instance.Levels;
+        ChepterDefenition chepter = LevelsSettigs.Instance.Chepters[_currentChepterIndex];
+        GameSetupManager.Instance.CurrentChepter = chepter;
+        List<LevelDefenition> levels = chepter.Levels;
         int count = 0;
         for (int y = 0; y < levels.Count / _rowWidth; y++)
         {

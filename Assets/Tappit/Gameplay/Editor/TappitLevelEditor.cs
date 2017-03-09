@@ -54,49 +54,51 @@ public class TappitLevelEditor : EditorWindow {
 		{
             GUILayout.BeginHorizontal();
             {
-                GUILayout.BeginVertical("Box");
+                GUILayout.BeginVertical("Box", GUILayout.Width(100));
                 {
-                    if (GUILayout.Button("Add Level"))
-                    {
-                        _currentLevel = new LevelDefenition();
-                        _levelsSettings.Levels.Add(_currentLevel);
-                    }
-                        
-
                     _levelsScrollPosition = GUILayout.BeginScrollView(_levelsScrollPosition);
                     {
                         GUILayout.BeginVertical();
                         {
-                            foreach (LevelDefenition level in _levelsSettings.Levels)
+                            foreach (ChepterDefenition chepter in _levelsSettings.Chepters)
                             {
-                                if (level == _currentLevel)
-                                {
-                                    GUI.color = Color.green;
-                                }
-                                else
-                                {
-                                    GUI.color = Color.white;
-                                }
 
                                 GUILayout.BeginHorizontal("Box");
                                 {
-                                    if (GUILayout.Button(level.ChecpterID + "-" + level.LevelID))
-                                    {
-                                        _currentLevel = level;
-                                        if (_boardController != null)
-                                        {
-                                            _boardController.InitWithLevel(_currentLevel);
-                                        }
-                                    }
-                                    if (GUILayout.Button("X"))
-                                    {
-                                        _levelsSettings.Levels.Remove(level);
-                                        GUILayout.EndHorizontal();
-                                        break;
-                                    }
+                                    GUILayout.Label("Chepter " + chepter.ChepterID);
                                 }
                                 GUILayout.EndHorizontal();
+
+                                foreach (LevelDefenition level in chepter.Levels)
+                                {
+                                    if (level == _currentLevel)
+                                    {
+                                        GUI.color = Color.green;
+                                    }
+
+                                    GUILayout.BeginHorizontal("Box");
+                                    {
+                                        if (GUILayout.Button(level.ChecpterID + "-" + level.LevelID))
+                                        {
+                                            _currentLevel = level;
+                                            if (_boardController != null)
+                                            {
+                                                _boardController.InitWithLevel(_currentLevel);
+                                            }
+                                        }
+                                        if (GUILayout.Button("X"))
+                                        {
+                                            chepter.Levels.Remove(level);
+                                            GUILayout.EndHorizontal();
+                                            break;
+                                        }
+                                    }
+                                    GUILayout.EndHorizontal();
+
+                                    GUI.color = Color.white;
+                                }
                             }
+
                         }
                         GUILayout.EndVertical();
 

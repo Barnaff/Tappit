@@ -23,7 +23,10 @@ public class GameplayUIController : MonoBehaviour {
 
 	public void SetLevel(LevelDefenition levelDefenition)
 	{
-		_levelLabel.text = levelDefenition.ChecpterID.ToString() + " - " + levelDefenition.LevelID.ToString();
+        if (levelDefenition != null)
+        {
+            _levelLabel.text = levelDefenition.ChecpterID.ToString() + " - " + levelDefenition.LevelID.ToString();
+        }
 	}
 
     public void UpdateMovesCount(int movesCount)
@@ -59,20 +62,23 @@ public class GameplayUIController : MonoBehaviour {
     {
         LevelDefenition currentLevel = GameSetupManager.Instance.SelectedLevel;
         int movesLeft = 0;
-        if (movesCount <= currentLevel.Stars3Steps)
+        if (currentLevel != null)
         {
-            movesLeft = currentLevel.Stars3Steps - movesCount;
-            _starsController.SetStars(3);
-        }
-        else if (movesCount <= currentLevel.Stars2Steps)
-        {
-            movesLeft = currentLevel.Stars2Steps - movesCount;
-            _starsController.SetStars(2);
-        }
-        else if (movesCount <= currentLevel.Stars1Steps)
-        {
-            movesLeft = currentLevel.Stars1Steps - movesCount;
-            _starsController.SetStars(1);
+            if (movesCount <= currentLevel.Stars3Steps)
+            {
+                movesLeft = currentLevel.Stars3Steps - movesCount;
+                _starsController.SetStars(3);
+            }
+            else if (movesCount <= currentLevel.Stars2Steps)
+            {
+                movesLeft = currentLevel.Stars2Steps - movesCount;
+                _starsController.SetStars(2);
+            }
+            else if (movesCount <= currentLevel.Stars1Steps)
+            {
+                movesLeft = currentLevel.Stars1Steps - movesCount;
+                _starsController.SetStars(1);
+            }
         }
         return movesLeft;
     }

@@ -23,6 +23,14 @@ public class LevelDefenition
 }
 
 [System.Serializable]
+public class ChepterDefenition
+{
+    public int ChepterID;
+
+    public List<LevelDefenition> Levels;
+}
+
+[System.Serializable]
 public class TileDefenition
 {
     public Vector2 Position;

@@ -148,7 +148,6 @@ public class GameplayController : MonoBehaviour {
 
     private void OnTileClickedHandler(TileController tileController)
     {
-
         bool canFlip = true;
 
         if (_useHints)
@@ -157,8 +156,6 @@ public class GameplayController : MonoBehaviour {
             if (tileController.Position != hintIndex)
             {
                 canFlip = false;
-
-                
             }
         }
 
@@ -170,15 +167,19 @@ public class GameplayController : MonoBehaviour {
 
             _boardController.FlipTile(tileController);
 
-            if (_boardController.IsLevelComplete)
+            if (_selectedLevel != null)
             {
-                LevelFinished();
-            }
+                if (_boardController.IsLevelComplete)
+                {
+                    LevelFinished();
+                }
 
-            if (_movesCount > _selectedLevel.Stars1Steps)
-            {
-                LevelFailed();
+                if (_movesCount > _selectedLevel.Stars1Steps)
+                {
+                    LevelFailed();
+                }
             }
+           
 
             if (_useHints)
             {
