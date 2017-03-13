@@ -16,6 +16,7 @@ public class LevelTileController : MonoBehaviour {
     public enum eLevelTileAnimation
     {
         None,
+        NoneFlipped,
         Next,
         Back,
     }
@@ -48,7 +49,7 @@ public class LevelTileController : MonoBehaviour {
 
         DOTween.Complete(this.transform);
 
-       
+        
 
         switch (tranistion)
         {
@@ -73,6 +74,12 @@ public class LevelTileController : MonoBehaviour {
             case eLevelTileAnimation.None:
                 {
                     _currentLevelView = _frontView;
+                    break;
+                }
+            case eLevelTileAnimation.NoneFlipped:
+                {
+                    _currentLevelView = _backView;
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0, this.transform.rotation.eulerAngles.y - 180f, 0));
                     break;
                 }
         }

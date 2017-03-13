@@ -7,7 +7,7 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
     #region Private Properties
 
     [SerializeField]
-    private string _lastLevel = null;
+    private int _lastLevelID = -1;
 
     private const string LAST_LEVEL_KEY = "lastLevel";
 
@@ -18,7 +18,10 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
 
     public void Init()
     {
-        
+        if (PlayerPrefsUtil.HasKey(LAST_LEVEL_KEY))
+        {
+            _lastLevelID = PlayerPrefsUtil.GetInt(LAST_LEVEL_KEY);
+        }
     }
 
     #endregion
@@ -47,9 +50,24 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
 
     private void FinishedLevel(LevelDefenition level)
     {
-        string levelKey = GetLevelKey(level);
-        _lastLevel = levelKey;
-        PlayerPrefsUtil.SetString(LAST_LEVEL_KEY, _lastLevel);
+        _lastLevelID = level.LevelID;
+        PlayerPrefsUtil.SetInt(LAST_LEVEL_KEY, _lastLevelID);
+    }
+
+    public int LastPlayedLevelID
+    {
+        get
+        {
+            return _lastLevelID;
+        }
+        set
+        {
+            if (value != _lastLevelID)
+            {
+                PlayerPrefsUtil.SetInt(LAST_LEVEL_KEY, value);
+            }
+            _lastLevelID = value;
+        }
     }
    
     #endregion

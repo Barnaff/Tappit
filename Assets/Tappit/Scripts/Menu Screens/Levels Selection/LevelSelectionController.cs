@@ -35,6 +35,12 @@ public class LevelSelectionController : MenuScreenBaseController {
             _levelTilePrefab.gameObject.SetActive(false);
         }
 
+        int lastPlayedLevel = AccountManager.Instance.LastPlayedLevelID;
+        if (lastPlayedLevel > 0)
+        {
+            _currentChepterIndex = lastPlayedLevel / LevelsSettigs.Instance.LevelsInChepter;
+        }
+
         GenerateLevelTiles(LevelTileController.eLevelTileAnimation.None);
     }
 
@@ -101,6 +107,11 @@ public class LevelSelectionController : MenuScreenBaseController {
 		newTile.gameObject.SetActive(true);
 		newTile.transform.SetParent(_levelsTilesContent);
 		newTile.transform.localScale = Vector3.one;
+
+        if (transition == LevelTileController.eLevelTileAnimation.None && _currentChepterIndex % 2 != 0)
+        {
+            transition = LevelTileController.eLevelTileAnimation.NoneFlipped;
+        }
 		newTile.SetLevel(levelDefenition, transition);
 		newTile.OnLevelTileSelected += LevelTileSelectedHandler;
 		return newTile;

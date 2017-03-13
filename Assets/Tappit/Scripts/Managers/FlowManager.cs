@@ -27,6 +27,8 @@ public class FlowManager : Kobapps.Singleton<FlowManager> {
     {
         GameSetupManager.Instance.SelectedLevel = level;
 
+        AccountManager.Instance.LastPlayedLevelID = level.LevelID;
+
         Kobapps.SceneLoaderutil.LoadSceneAsync(GeneratedConstants.Scenes.GameScene, () =>
         {
 
