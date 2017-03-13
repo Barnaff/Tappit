@@ -35,6 +35,7 @@ public class TappitLevelEditor : EditorWindow {
 
 	void OnGUI()
 	{
+      
 		if (_boardController == null)
 		{
 			_boardController = GameObject.FindObjectOfType<BoardController>();
@@ -60,43 +61,41 @@ public class TappitLevelEditor : EditorWindow {
                     {
                         GUILayout.BeginVertical();
                         {
-                            foreach (ChepterDefenition chepter in _levelsSettings.Chepters)
+                            foreach (LevelDefenition level in _levelsSettings.Levels)
                             {
+                                if (level == _currentLevel)
+                                {
+                                    GUI.color = Color.green;
+                                }
 
                                 GUILayout.BeginHorizontal("Box");
                                 {
-                                    GUILayout.Label("Chepter " + chepter.ChepterID);
+                                    if (GUILayout.Button(level.ChecpterID + "-" + level.LevelID))
+                                    {
+                                        _currentLevel = level;
+                                        if (_boardController != null)
+                                        {
+                                            _boardController.InitWithLevel(_currentLevel);
+                                        }
+                                    }
+                                    if (GUILayout.Button("X"))
+                                    {
+                                        _levelsSettings.Levels.Remove(level);
+                                        GUILayout.EndHorizontal();
+                                        break;
+                                    }
                                 }
                                 GUILayout.EndHorizontal();
 
-                                foreach (LevelDefenition level in chepter.Levels)
-                                {
-                                    if (level == _currentLevel)
-                                    {
-                                        GUI.color = Color.green;
-                                    }
+                                GUI.color = Color.white;
+                            }
 
-                                    GUILayout.BeginHorizontal("Box");
-                                    {
-                                        if (GUILayout.Button(level.ChecpterID + "-" + level.LevelID))
-                                        {
-                                            _currentLevel = level;
-                                            if (_boardController != null)
-                                            {
-                                                _boardController.InitWithLevel(_currentLevel);
-                                            }
-                                        }
-                                        if (GUILayout.Button("X"))
-                                        {
-                                            chepter.Levels.Remove(level);
-                                            GUILayout.EndHorizontal();
-                                            break;
-                                        }
-                                    }
-                                    GUILayout.EndHorizontal();
+                            if (GUILayout.Button("Add Level"))
+                            {
+                                LevelDefenition newLevel = new LevelDefenition();
+                                newLevel.BoardSetup = new List<TileDefenition>();
 
-                                    GUI.color = Color.white;
-                                }
+                                _levelsSettings.Levels.Add(newLevel);
                             }
 
                         }

@@ -50,16 +50,13 @@ public class GameplayController : MonoBehaviour {
 
         _boardController.InitWithLevel(_selectedLevel);
         _boardController.OnTileClicked += OnTileClickedHandler;
-
         _gameplayUI.SetLevel(_selectedLevel);
         _gameplayUI.UpdateMovesCount(_movesCount);
-
 
         if (GameSetupManager.Instance.UseHint)
         {
             _useHints = true;
             ShowNextHint();
-
             GameSetupManager.Instance.UseHint = false;
         }
     }
@@ -70,25 +67,18 @@ public class GameplayController : MonoBehaviour {
     private IEnumerator FinishedGameSequance()
     {
 		_levelCompleted = true;
-
         yield return new WaitForSeconds(1.0f);
-
         yield return StartCoroutine(ClearGameplayContents());
-
         LevelCompletedPopupController levelCompletionPopup = PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
         levelCompletionPopup.SetMovesCount(_movesCount);
-
     }
 
 	private IEnumerator LevelFailedSequance()
 	{
 		_levelCompleted = true;
-
 		yield return new WaitForSeconds(1.0f);
-
         yield return StartCoroutine(ClearGameplayContents());
-
-		LevelFailedPopupController levelFailedPopup = PopupsManager.Instance.DisplayPopup<LevelFailedPopupController>();
+		PopupsManager.Instance.DisplayPopup<LevelFailedPopupController>();
 	}
 
     private IEnumerator ClearGameplayContents()

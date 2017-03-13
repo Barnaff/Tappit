@@ -36,10 +36,10 @@ public class FlowManager : Kobapps.Singleton<FlowManager> {
     public void NextLevel()
     {
         LevelDefenition currentLevel = GameSetupManager.Instance.SelectedLevel;
-        int currentLevelIndex = GameSetupManager.Instance.CurrentChepter.Levels.IndexOf(currentLevel);
-        if (currentLevelIndex <= GameSetupManager.Instance.CurrentChepter.Levels.Count)
+        int currentLevelIndex = LevelsSettigs.Instance.Levels.IndexOf(currentLevel);
+        if (currentLevelIndex <= LevelsSettigs.Instance.Levels.Count)
         {
-            LevelDefenition nextLevel = GameSetupManager.Instance.CurrentChepter.Levels[currentLevelIndex + 1];
+            LevelDefenition nextLevel = LevelsSettigs.Instance.Levels[currentLevelIndex + 1];
 
             StartLevel(nextLevel);
         }

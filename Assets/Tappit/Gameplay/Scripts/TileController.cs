@@ -62,6 +62,8 @@ public class TileController : MonoBehaviour {
     {
         _isFlipped = !_isFlipped;
 
+        DOTween.Complete(this.transform);
+
         if (animated)
         {
             this.transform.DOMoveZ(Random.Range(-1.5f, -3f), 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative();

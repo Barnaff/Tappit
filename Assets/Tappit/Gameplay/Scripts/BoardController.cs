@@ -30,9 +30,6 @@ public class BoardController : MonoBehaviour {
     [SerializeField]
     private Vector2 _screenSize;
 
-    [SerializeField]
-    private bool _isFlipping = false;
-
     #endregion
 
 	
@@ -120,21 +117,16 @@ public class BoardController : MonoBehaviour {
 
     public void FlipTile(TileController tileController)
     {
-        if (!_isFlipping)
+        List<TileController> adjacentTiles = GetAdjacentTIles(tileController.Position);
+
+        tileController.Flip(true, () =>
         {
-            _isFlipping = true;
 
-            List<TileController> adjacentTiles = GetAdjacentTIles(tileController.Position);
+        });
 
-            tileController.Flip(true, () =>
-            {
-                _isFlipping = false;
-            });
-
-            foreach (TileController adjacentTile in adjacentTiles)
-            {
-                adjacentTile.Flip(true, null);
-            }
+        foreach (TileController adjacentTile in adjacentTiles)
+        {
+            adjacentTile.Flip(true, null);
         }
     }
 

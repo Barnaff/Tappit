@@ -30,11 +30,6 @@ public class PopupsManager : Kobapps.Singleton<PopupsManager> {
             }
             _activePopups.Add(popupController);
 
-            if (popupController.DontDestroyOnLoad)
-            {
-                DontDestroyOnLoad(popupController.gameObject);
-            }
-
             popupController.OnPopupRemoved += (popup) =>
             {
                 if (_activePopups.Contains(popup))
@@ -128,8 +123,7 @@ public class PopupBaseController : MonoBehaviour
     private System.Action <PopupBaseController> _onPopupRemoved;
 
     #endregion
-
-
+     
     void OnDestory()
     {
         if (_onPopupRemoved != null)
@@ -140,14 +134,6 @@ public class PopupBaseController : MonoBehaviour
     }
 
     #region Public
-
-    public bool DontDestroyOnLoad
-    {
-        get
-        {
-            return _dontDestoryOnLoad;
-        }
-    }
 
     public void ClosePopup()
     {

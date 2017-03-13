@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DG.Tweening;
 
 public class LevelTileController : MonoBehaviour {
 
@@ -12,49 +13,74 @@ public class LevelTileController : MonoBehaviour {
 
     public event LevelTileSelectedDelegate OnLevelTileSelected;
 
+    public enum eLevelTileAnimation
+    {
+        None,
+        Next,
+        Back,
+    }
+
     #endregion
 
 
     #region Private Properties
 
     [SerializeField]
-	private TextMeshProUGUI _levelLabel;
-
-    [SerializeField]
     private LevelDefenition _levelDefenition;
 
     [SerializeField]
-    private SpriteRenderer[] _stars;
+    private LevelTileView _frontView;
 
     [SerializeField]
-    private Sprite _fullStarSprite;
+    private LevelTileView _backView;
 
     [SerializeField]
-    private Sprite _emptryStarSprite;
+    private LevelTileView _currentLevelView;
 
     #endregion
 
 
     #region Public
 
-    public void SetLevel(LevelDefenition levelDefenition)
+    public void SetLevel(LevelDefenition levelDefenition, eLevelTileAnimation tranistion)
     {
         _levelDefenition = levelDefenition;
-        _levelLabel.text = _levelDefenition.LevelID.ToString();
+
+        DOTween.Complete(this.transform);
+
+       
+
+        switch (tranistion)
+        {
+            case eLevelTileAnimation.Next:
+                {
+                    SwitchView();
+                    float delay = (LevelDefenition.LevelID - 1) % 4;
+                    delay *= 0.1f;
+
+                    this.transform.DORotate(new Vector3(0, this.transform.rotation.eulerAngles.y + 180f, 0), 0.5f).SetDelay(delay);
+                    break;
+                }
+            case eLevelTileAnimation.Back:
+                {
+                    SwitchView();
+                    float delay = 4 - (LevelDefenition.LevelID - 1) % 4;
+                    delay *= 0.1f;
+
+                    this.transform.DORotate(new Vector3(0, this.transform.rotation.eulerAngles.y - 180f, 0), 0.5f).SetDelay(delay);
+                    break;
+                }
+            case eLevelTileAnimation.None:
+                {
+                    _currentLevelView = _frontView;
+                    break;
+                }
+        }
 
         int starsCount = AccountManager.Instance.StarsForLevel(_levelDefenition);
 
-        for (int i=0; i < _stars.Length; i++)
-        {
-            if (i < starsCount)
-            {
-                _stars[i].sprite = _fullStarSprite;
-            }
-            else
-            {
-                _stars[i].sprite = _emptryStarSprite;
-            }
-        }
+        _currentLevelView.SetLevel(_levelDefenition.LevelID, starsCount);
+
     }
 
     public LevelDefenition LevelDefenition
@@ -73,6 +99,23 @@ public class LevelTileController : MonoBehaviour {
 			OnLevelTileSelected(this);
 		}
 	}
+
+    #endregion
+
+
+    #region Private
+
+    private void SwitchView()
+    {
+        if (_currentLevelView == _frontView)
+        {
+            _currentLevelView = _backView;
+        }
+        else
+        {
+            _currentLevelView = _frontView;
+        }
+    }
 
     #endregion
 
