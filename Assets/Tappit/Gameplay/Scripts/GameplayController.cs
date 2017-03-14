@@ -154,6 +154,8 @@ public class GameplayController : MonoBehaviour {
             Vector3 screenPosition = Camera.main.WorldToScreenPoint(tilePosition);
             tilePosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 8f));
 
+            _hintIndicator.SetActive(true);
+
             _hintIndicator.transform.position = tilePosition;
         }
     }
