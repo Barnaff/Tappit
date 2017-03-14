@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 
 public class BoardController : MonoBehaviour {
 
@@ -36,7 +36,7 @@ public class BoardController : MonoBehaviour {
 
 	#region Public
 
-    public void InitWithLevel(LevelDefenition level)
+    public void BuildLevel(LevelDefenition level)
     {
         if (level == null)
         {
@@ -64,7 +64,8 @@ public class BoardController : MonoBehaviour {
 			{
                 if (tileController != null && tileController.gameObject != null)
                 {
-                    Destroy(tileController.gameObject);
+                    tileController.OnTileClicked -= OnTileCLickedHandler;
+                    Lean.LeanPool.Despawn(tileController.gameObject);
                 }
 			}
 		}
@@ -135,6 +136,22 @@ public class BoardController : MonoBehaviour {
         return _boardTiles[(int)tileIndex.y, (int)tileIndex.x].transform.position;
     }
 
+    public void DisplayOutro()
+    {
+        foreach (TileController tileController in _boardTiles)
+        {
+            Vector3 newPosition = tileController.transform.position;
+            newPosition.z -= Random.Range(2.0f, 4.0f);
+
+            tileController.transform.DORotate((Random.insideUnitSphere * 5.0f) + tileController.transform.rotation.eulerAngles, 0.5f);
+            tileController.transform.DOMove(newPosition, 0.4f).OnComplete(()=>
+            {
+                float delay = Random.Range(0.1f, 0.2f);
+                tileController.transform.DOScale(Vector3.zero, 0.4f).SetDelay(delay);
+                tileController.transform.DOMove(Vector3.zero, 0.4f).SetDelay(delay);
+            });
+        }
+    }
 
     #endregion
 
@@ -160,11 +177,13 @@ public class BoardController : MonoBehaviour {
 				_boardTiles[y,x] = tileController;
 			}
 		}
-	}
+
+        DisplayIntro();
+    }
 
 	private TileController CreateTile(int x, int y, TileDefenition tileDefenition)
 	{
-		TileController newTileController = Instantiate(_tilePrefab);
+        TileController newTileController = Lean.LeanPool.Spawn(_tilePrefab);
 
 		newTileController.transform.SetParent(this.transform);
 
@@ -179,12 +198,9 @@ public class BoardController : MonoBehaviour {
 
 		newTileController.Position = new Vector2(x ,y);
 
-        if (tileDefenition != null && tileDefenition.IsFlipped)
-        {
-            newTileController.Flip(false, null);
-        }
+        newTileController.SetFace(tileDefenition.IsFlipped);
 
-		return newTileController;
+        return newTileController;
 	}
 
 
@@ -234,7 +250,35 @@ public class BoardController : MonoBehaviour {
 
         return null;
     }
-		
+
+    private void DisplayIntro()
+    {
+        foreach (TileController tileController in _boardTiles)
+        {
+            Vector3 endPosition = tileController.transform.position;
+            Vector3 endRotation = tileController.transform.rotation.eulerAngles;
+            tileController.transform.position = new Vector3(endPosition.x, -_screenSize.y, endPosition.z);
+            Vector3 midPosition = endPosition;
+            midPosition.z -= Random.Range(2.0f, 4.0f);
+            tileController.transform.DORotate((Random.insideUnitSphere * 5.0f) + endRotation, 0.5f).OnComplete(()=>
+            {
+                tileController.transform.DOShakeRotation(0.3f, 1.0f, 1).OnComplete(()=>
+                {
+                    tileController.transform.DORotate(endRotation, 0.5f);
+                });
+                
+            });
+            tileController.transform.DOMove(midPosition, 0.5f).SetEase(Ease.OutCubic).OnComplete( ()=>
+            {
+                tileController.transform.DOShakePosition(0.3f, 0.01f, 1).OnComplete(() =>
+                {
+                    tileController.transform.DOMove(endPosition, 0.3f).SetEase(Ease.OutCirc).SetDelay(Random.Range(0, 0.2f));
+                });
+                
+            });
+        }
+    }
+	
 	#endregion
 
 

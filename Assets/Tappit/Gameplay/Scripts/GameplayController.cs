@@ -34,8 +34,6 @@ public class GameplayController : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        _selectedLevel = GameSetupManager.Instance.SelectedLevel;
-
         _boardController = GameObject.FindObjectOfType<BoardController>();
         if (_boardController == null)
         {
@@ -48,8 +46,30 @@ public class GameplayController : MonoBehaviour {
 			Debug.LogError("ERROR - Cannot find gameplay UI in scene!");
 		}
 
-        _boardController.InitWithLevel(_selectedLevel);
         _boardController.OnTileClicked += OnTileClickedHandler;
+
+        ReloadLevel();
+
+    }
+
+
+    #region Public
+
+    public void ReloadLevel()
+    {
+        Debug.Log("reload level");
+
+        _useHints = false;
+        _movesCount = 0;
+        _levelCompleted = false;
+        if (_hintIndicator != null)
+        {
+            _hintIndicator.SetActive(false);
+        }
+        _gameplayUI.gameObject.SetActive(true);
+        _boardController.gameObject.SetActive(true);
+        _selectedLevel = GameSetupManager.Instance.SelectedLevel;
+        _boardController.BuildLevel(_selectedLevel);
         _gameplayUI.SetLevel(_selectedLevel);
         _gameplayUI.UpdateMovesCount(_movesCount);
 
@@ -61,6 +81,8 @@ public class GameplayController : MonoBehaviour {
         }
     }
 
+    #endregion
+
 
     #region Private
 
@@ -68,6 +90,11 @@ public class GameplayController : MonoBehaviour {
     {
 		_levelCompleted = true;
         yield return new WaitForSeconds(1.0f);
+
+        _boardController.DisplayOutro();
+
+        yield return new WaitForSeconds(1.2f);
+
         yield return StartCoroutine(ClearGameplayContents());
         LevelCompletedPopupController levelCompletionPopup = PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
         levelCompletionPopup.SetMovesCount(_movesCount);

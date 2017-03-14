@@ -29,10 +29,21 @@ public class FlowManager : Kobapps.Singleton<FlowManager> {
 
         AccountManager.Instance.LastPlayedLevelID = level.LevelID;
 
-        Kobapps.SceneLoaderutil.LoadSceneAsync(GeneratedConstants.Scenes.GameScene, () =>
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == GeneratedConstants.Scenes.GameScene)
         {
+            GameplayController gameplayController = GameObject.FindObjectOfType<GameplayController>();
+            if (gameplayController != null)
+            {
+                gameplayController.ReloadLevel();
+            }
+        }
+        else
+        {
+            Kobapps.SceneLoaderutil.LoadSceneAsync(GeneratedConstants.Scenes.GameScene, () =>
+            {
 
-        }, Kobapps.eSceneTransition.FadeOutFadeIn);
+            }, Kobapps.eSceneTransition.FadeOutFadeIn);
+        }
     }
 
     public void NextLevel()

@@ -27,6 +27,23 @@ public class TileController : MonoBehaviour {
 
 	#region Public
 
+    public void SetFace(bool isFlipped)
+    {
+        _isFlipped = isFlipped;
+        if (_isFlipped)
+        {
+            Vector3 rotation = this.transform.rotation.eulerAngles;
+            rotation.y += 180f;
+            this.transform.rotation = Quaternion.Euler(rotation);
+        }
+        else
+        {
+            Vector3 rotation = this.transform.rotation.eulerAngles;
+            rotation.y = 0f;
+            this.transform.rotation = Quaternion.Euler(rotation);
+        }
+    }
+
 	public void Flip(bool animated, System.Action completionAction)
 	{
         StartCoroutine(FlipTileCorutine(animated, completionAction)); 

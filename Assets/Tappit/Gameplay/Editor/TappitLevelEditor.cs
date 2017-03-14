@@ -51,7 +51,7 @@ public class TappitLevelEditor : EditorWindow {
         }
 
 
-		if (_boardController != null)
+		if (_boardController != null && Application.isPlaying)
 		{
             GUILayout.BeginHorizontal();
             {
@@ -75,7 +75,7 @@ public class TappitLevelEditor : EditorWindow {
                                         _currentLevel = level;
                                         if (_boardController != null)
                                         {
-                                            _boardController.InitWithLevel(_currentLevel);
+                                            _boardController.BuildLevel(_currentLevel);
                                         }
                                     }
                                     if (GUILayout.Button("X"))
@@ -113,7 +113,7 @@ public class TappitLevelEditor : EditorWindow {
                     {
                         if (GUILayout.Button("Reset"))
                         {
-                            _boardController.InitWithLevel(_currentLevel);
+                            _boardController.BuildLevel(_currentLevel);
                         }
 
                         if (GUILayout.Button("Clear Board"))
@@ -123,7 +123,7 @@ public class TappitLevelEditor : EditorWindow {
                                 tiledefenition.IsFlipped = false;
                             }
                             _currentLevel.Steps.Clear();
-                            _boardController.InitWithLevel(_currentLevel);
+                            _boardController.BuildLevel(_currentLevel);
                         }
 
                         _isRecording = EditorGUILayout.Toggle("Record", _isRecording, "Button");
