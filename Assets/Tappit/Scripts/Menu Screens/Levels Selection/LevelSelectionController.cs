@@ -119,7 +119,11 @@ public class LevelSelectionController : MenuScreenBaseController {
 
     private void LevelTileSelectedHandler(LevelTileController levelTileController)
     {
-        FlowManager.Instance.StartLevel(levelTileController.LevelDefenition);
+        bool isUnlocked = AccountManager.Instance.IsLevelUnlocked(levelTileController.LevelDefenition);
+        if (isUnlocked)
+        {
+            FlowManager.Instance.StartLevel(levelTileController.LevelDefenition);
+        }
     }
 
     #endregion

@@ -49,8 +49,6 @@ public class LevelTileController : MonoBehaviour {
 
         DOTween.Complete(this.transform);
 
-        
-
         switch (tranistion)
         {
             case eLevelTileAnimation.Next:
@@ -85,8 +83,9 @@ public class LevelTileController : MonoBehaviour {
         }
 
         int starsCount = AccountManager.Instance.StarsForLevel(_levelDefenition);
+        bool isLevelUnlocked = AccountManager.Instance.IsLevelUnlocked(_levelDefenition);
 
-        _currentLevelView.SetLevel(_levelDefenition.LevelID, starsCount);
+        _currentLevelView.SetLevel(_levelDefenition.LevelID, starsCount, !isLevelUnlocked);
 
     }
 

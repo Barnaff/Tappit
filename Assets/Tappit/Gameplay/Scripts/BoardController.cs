@@ -136,17 +136,42 @@ public class BoardController : MonoBehaviour {
         return _boardTiles[(int)tileIndex.y, (int)tileIndex.x].transform.position;
     }
 
+    public void DisplayIntro()
+    {
+        foreach (TileController tileController in _boardTiles)
+        {
+            Vector3 endPosition = tileController.transform.position;
+            Vector3 endRotation = tileController.transform.rotation.eulerAngles;
+            tileController.transform.position = new Vector3(endPosition.x, -_screenSize.y, endPosition.z);
+            Vector3 midPosition = endPosition;
+            midPosition.z -= Random.Range(2.0f, 4.0f);
+            tileController.transform.DORotate((Random.insideUnitSphere * 5.0f) + endRotation, 0.5f).OnComplete(() =>
+            {
+                tileController.transform.DORotate(endRotation, 0.5f);
+
+            });
+            tileController.transform.DOMove(midPosition, 0.5f).SetEase(Ease.OutCubic).OnComplete(() =>
+            {
+                tileController.transform.DOMove(endPosition, 0.3f).SetEase(Ease.InCubic);
+
+            });
+        }
+    }
+
+
     public void DisplayOutro()
     {
         foreach (TileController tileController in _boardTiles)
         {
             Vector3 newPosition = tileController.transform.position;
-            newPosition.z -= Random.Range(2.0f, 4.0f);
+            Vector3 originalRotation = tileController.transform.rotation.eulerAngles;
+            newPosition.z -= Random.Range(3.0f, 6.0f);
 
-            tileController.transform.DORotate((Random.insideUnitSphere * 5.0f) + tileController.transform.rotation.eulerAngles, 0.5f);
+            tileController.transform.DORotate((Random.insideUnitSphere * 30.0f) + tileController.transform.rotation.eulerAngles, 0.5f);
             tileController.transform.DOMove(newPosition, 0.4f).OnComplete(()=>
             {
                 float delay = Random.Range(0.1f, 0.2f);
+                tileController.transform.DORotate(originalRotation, 0.4f);
                 tileController.transform.DOScale(Vector3.zero, 0.4f).SetDelay(delay);
                 tileController.transform.DOMove(Vector3.zero, 0.4f).SetDelay(delay);
             });
@@ -177,8 +202,6 @@ public class BoardController : MonoBehaviour {
 				_boardTiles[y,x] = tileController;
 			}
 		}
-
-        DisplayIntro();
     }
 
 	private TileController CreateTile(int x, int y, TileDefenition tileDefenition)
@@ -251,34 +274,6 @@ public class BoardController : MonoBehaviour {
         return null;
     }
 
-    private void DisplayIntro()
-    {
-        foreach (TileController tileController in _boardTiles)
-        {
-            Vector3 endPosition = tileController.transform.position;
-            Vector3 endRotation = tileController.transform.rotation.eulerAngles;
-            tileController.transform.position = new Vector3(endPosition.x, -_screenSize.y, endPosition.z);
-            Vector3 midPosition = endPosition;
-            midPosition.z -= Random.Range(2.0f, 4.0f);
-            tileController.transform.DORotate((Random.insideUnitSphere * 5.0f) + endRotation, 0.5f).OnComplete(()=>
-            {
-                tileController.transform.DOShakeRotation(0.3f, 1.0f, 1).OnComplete(()=>
-                {
-                    tileController.transform.DORotate(endRotation, 0.5f);
-                });
-                
-            });
-            tileController.transform.DOMove(midPosition, 0.5f).SetEase(Ease.OutCubic).OnComplete( ()=>
-            {
-                tileController.transform.DOShakePosition(0.3f, 0.01f, 1).OnComplete(() =>
-                {
-                    tileController.transform.DOMove(endPosition, 0.3f).SetEase(Ease.OutCirc).SetDelay(Random.Range(0, 0.2f));
-                });
-                
-            });
-        }
-    }
-	
 	#endregion
 
 

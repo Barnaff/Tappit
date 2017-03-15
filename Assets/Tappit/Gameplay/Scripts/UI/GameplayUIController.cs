@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DG.Tweening;
 
 public class GameplayUIController : MonoBehaviour {
 
@@ -16,12 +17,23 @@ public class GameplayUIController : MonoBehaviour {
     [SerializeField]
     private StarsPanelController _starsController;
 
-	#endregion
+    #endregion
 
 
-	#region Public
+    #region Initialization
 
-	public void SetLevel(LevelDefenition levelDefenition)
+    void Awake()
+    {
+        CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0f;
+    }
+
+    #endregion
+
+
+    #region Public
+
+    public void SetLevel(LevelDefenition levelDefenition)
 	{
         if (levelDefenition != null)
         {
@@ -51,6 +63,18 @@ public class GameplayUIController : MonoBehaviour {
 	{
         GameSetupManager.Instance.UseHint = true;
         FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+    }
+
+    public void Show()
+    {
+        CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
+        canvasGroup.DOFade(1.0f, 0.5f);
+    }
+
+    public void Hide()
+    {
+        CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
+        canvasGroup.DOFade(0.0f, 0.5f);
     }
 
     #endregion

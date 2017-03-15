@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class LevelCompletedPopupController : PopupBaseController {
 
@@ -22,6 +23,12 @@ public class LevelCompletedPopupController : PopupBaseController {
 
     [SerializeField]
     private Sprite _flashingStarSprite;
+
+    [SerializeField]
+    private int _starsCount = 0;
+
+    [SerializeField]
+    private CanvasGroup[] _fadeGroups;
 
     #endregion
 
@@ -59,20 +66,61 @@ public class LevelCompletedPopupController : PopupBaseController {
             starCount = 0;
        }
 
+        _starsCount = starCount;
 
-        for (int i=0; i < _starsImages.Length; i++)
+        AccountManager.Instance.UpdateLevelStars(currentLevel, starCount);
+
+        DisplayIntroAnimation();
+    }
+
+
+    #endregion
+
+
+    #region Private
+
+    private void DisplayIntroAnimation()
+    {
+        CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
+
+        canvasGroup.alpha = 0f;
+        canvasGroup.DOFade(1f, 0.5f);
+
+        for (int i = 0; i < _starsImages.Length; i++)
         {
-            if (i < starCount)
+            if (i < _starsCount)
             {
-                _starsImages[i].sprite = _fullStarSprite;
+                Image starImage = _starsImages[i];
+                starImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f).SetDelay((i * 0.5f) + 0.5f).OnStart(() =>
+                {
+                    starImage.sprite = _fullStarSprite;
+                });
             }
             else
             {
                 _starsImages[i].sprite = _emptyStarSprite;
+
             }
         }
 
-        AccountManager.Instance.UpdateLevelStars(currentLevel, starCount);
+        for (int i=0; i< _fadeGroups.Length; i++)
+        {
+            CanvasGroup fadeItem = _fadeGroups[i];
+            fadeItem.alpha = 0;
+            fadeItem.DOFade(1.0f, 0.7f).SetDelay(1.0f + (i * 0.2f));
+        }
+    }
+
+    private void DisplayCloseAnimation(System.Action completionAction)
+    {
+        CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
+        canvasGroup.DOFade(0f, 0.5f).OnComplete(()=>
+        {
+            if (completionAction != null)
+            {
+                completionAction();
+            }
+        });
     }
 
     #endregion
@@ -82,23 +130,26 @@ public class LevelCompletedPopupController : PopupBaseController {
 
     public void NextLevelButtonAction()
     {
-        FlowManager.Instance.NextLevel();
-
-        ClosePopup();
+        DisplayCloseAnimation(()=>
+        {
+            FlowManager.Instance.NextLevel();
+            ClosePopup();
+        });
+       
     }
 
     public void MenuButtonAction()
     {
         FlowManager.Instance.LevelsSelectionScreen();
-
-        ClosePopup();
     }
 
     public void PlayAgainButtonAction()
     {
-        FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
-
-        ClosePopup();
+        DisplayCloseAnimation(() =>
+        {
+            FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+            ClosePopup();
+        });
     }
 
     #endregion

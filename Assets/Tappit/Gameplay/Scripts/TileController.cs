@@ -14,6 +14,7 @@ public class TileController : MonoBehaviour {
 	[SerializeField]
 	public Vector2 Position;
 
+
 	#endregion
 
 
@@ -22,7 +23,10 @@ public class TileController : MonoBehaviour {
 	[SerializeField]
 	private bool _isFlipped;
 
-	#endregion
+    [SerializeField]
+    private Vector3 _origianlPosition;
+
+    #endregion
 
 
 	#region Public
@@ -42,6 +46,10 @@ public class TileController : MonoBehaviour {
             rotation.y = 0f;
             this.transform.rotation = Quaternion.Euler(rotation);
         }
+
+        _origianlPosition = this.transform.position;
+        this.transform.rotation = Quaternion.Euler((Random.insideUnitSphere * 2.0f) + this.transform.rotation.eulerAngles);
+
     }
 
 	public void Flip(bool animated, System.Action completionAction)

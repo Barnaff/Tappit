@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class GameplayController : MonoBehaviour {
 
@@ -28,6 +29,9 @@ public class GameplayController : MonoBehaviour {
     private GameObject _hintPrefab;
 
     private GameObject _hintIndicator = null;
+
+    [SerializeField]
+    private Material _skyboxMaterial;
 
     #endregion
 
@@ -66,7 +70,7 @@ public class GameplayController : MonoBehaviour {
         {
             _hintIndicator.SetActive(false);
         }
-        _gameplayUI.gameObject.SetActive(true);
+        _gameplayUI.Show();
         _boardController.gameObject.SetActive(true);
         _selectedLevel = GameSetupManager.Instance.SelectedLevel;
         _boardController.BuildLevel(_selectedLevel);
@@ -78,7 +82,17 @@ public class GameplayController : MonoBehaviour {
             _useHints = true;
             ShowNextHint();
             GameSetupManager.Instance.UseHint = false;
+
+            RenderSettings.skybox.DOBlendableColor(Color.green , "_Tint", 1.0f);
         }
+        else
+        {
+            RenderSettings.skybox.DOBlendableColor(Color.gray, "_Tint", 1.0f);
+        }
+
+        _boardController.DisplayIntro();
+
+
     }
 
     #endregion
@@ -98,6 +112,8 @@ public class GameplayController : MonoBehaviour {
         yield return StartCoroutine(ClearGameplayContents());
         LevelCompletedPopupController levelCompletionPopup = PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
         levelCompletionPopup.SetMovesCount(_movesCount);
+
+        AccountManager.Instance.FinishedLevel(_selectedLevel);
     }
 
 	private IEnumerator LevelFailedSequance()
@@ -110,7 +126,7 @@ public class GameplayController : MonoBehaviour {
 
     private IEnumerator ClearGameplayContents()
     {
-        _gameplayUI.gameObject.SetActive(false);
+        _gameplayUI.Hide();
         _boardController.gameObject.SetActive(false);
 
         if (_hintIndicator != null)

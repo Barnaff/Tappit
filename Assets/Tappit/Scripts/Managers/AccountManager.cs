@@ -9,7 +9,11 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
     [SerializeField]
     private int _lastLevelID = -1;
 
+    [SerializeField]
+    private int _topLevel = 0;
+
     private const string LAST_LEVEL_KEY = "lastLevel";
+    private const string TOP_LEVEL_KEY = "topLevel";
 
     #endregion
 
@@ -21,6 +25,11 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
         if (PlayerPrefsUtil.HasKey(LAST_LEVEL_KEY))
         {
             _lastLevelID = PlayerPrefsUtil.GetInt(LAST_LEVEL_KEY);
+        }
+
+        if (PlayerPrefsUtil.HasKey(TOP_LEVEL_KEY))
+        {
+            _topLevel = PlayerPrefsUtil.GetInt(TOP_LEVEL_KEY);
         }
     }
 
@@ -41,17 +50,34 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
         return 0;
     }
 
+    public bool IsLevelUnlocked(LevelDefenition level)
+    {
+        return level.LevelID <= _topLevel + 1;
+    }
+
     public void UpdateLevelStars(LevelDefenition level, int stars)
     {
         string levelKey = GetLevelKey(level);
-
-        PlayerPrefsUtil.SetInt(levelKey, stars);
+        int currentStars = 0;
+        if (PlayerPrefsUtil.HasKey(levelKey))
+        {
+            currentStars = PlayerPrefsUtil.GetInt(levelKey);
+        }
+        if (stars > currentStars)
+        {
+            PlayerPrefsUtil.SetInt(levelKey, stars);
+        }
     }
 
-    private void FinishedLevel(LevelDefenition level)
+    public void FinishedLevel(LevelDefenition level)
     {
         _lastLevelID = level.LevelID;
         PlayerPrefsUtil.SetInt(LAST_LEVEL_KEY, _lastLevelID);
+        if (level.LevelID > _topLevel)
+        {
+            _topLevel = level.LevelID;
+            PlayerPrefsUtil.SetInt(TOP_LEVEL_KEY, _topLevel);
+        }
     }
 
     public int LastPlayedLevelID
