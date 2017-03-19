@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class LevelFailedPopupController : PopupBaseController {
-
+public class GamePausedPopupController : PopupBaseController {
 
     #region Private Properties
 
@@ -36,7 +35,7 @@ public class LevelFailedPopupController : PopupBaseController {
         {
             CanvasGroup fadeItem = _fadeGroups[i];
             fadeItem.alpha = 0;
-            fadeItem.DOFade(1.0f, 0.7f).SetDelay(1.0f + (i * 0.2f));
+            fadeItem.DOFade(1.0f, 0.5f).SetDelay(0.3f + (i * 0.2f));
         }
     }
 
@@ -59,20 +58,28 @@ public class LevelFailedPopupController : PopupBaseController {
 
 
     public void MenuButtonAction()
-	{
+    {
         FlowManager.Instance.LevelsSelectionScreen();
-	}
+    }
 
-	public void PlayAgainButtonAction()
-	{
+    public void PlayAgainButtonAction()
+    {
         DisplayCloseAnimation(() =>
         {
             FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
 
             ClosePopup();
         });
-	}
+    }
 
-	#endregion
+    public void ResumeButtonAction()
+    {
+        DisplayCloseAnimation(() =>
+        {
+            ClosePopup();
+        });
+    }
+
+    #endregion
 
 }

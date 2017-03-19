@@ -71,6 +71,7 @@ public class LevelTileController : MonoBehaviour {
                 }
             case eLevelTileAnimation.None:
                 {
+                    _backView.Disable();
                     _currentLevelView = _frontView;
                     break;
                 }

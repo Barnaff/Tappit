@@ -162,6 +162,34 @@ public class TappitLevelEditor : EditorWindow {
 
                         GUILayout.BeginVertical("Box");
                         {
+                            GUILayout.BeginVertical("Box");
+                            {
+                                int tileCount = 0;
+                                for (int i = _currentLevel.BoardSetup.Count - 1; i >= 0 ; i--)
+                                {
+                                    if (tileCount == 0)
+                                    {
+                                        GUILayout.BeginHorizontal("Box");
+                                    }
+
+
+                                    TileDefenition tileDefenition = _currentLevel.BoardSetup[i];
+                                    tileDefenition.TileType = (eTileType)EditorGUILayout.EnumPopup(tileDefenition.TileType);
+
+                                    if (tileCount == _currentLevel.BoardSize.x - 1)
+                                    {
+                                        GUILayout.EndHorizontal();
+                                        tileCount = 0;
+                                    }
+                                    else
+                                    {
+                                        tileCount++;
+                                    }
+                                }
+                            }
+                            GUILayout.EndVertical();
+
+
                             GUILayout.BeginHorizontal();
                             {
                                 GUILayout.Label("History");
@@ -171,6 +199,8 @@ public class TappitLevelEditor : EditorWindow {
                                 }
                             }
                             GUILayout.EndHorizontal();
+
+                           
 
                             _historyScrollPosition = GUILayout.BeginScrollView(_historyScrollPosition);
                             {

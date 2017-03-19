@@ -6,9 +6,19 @@ using DG.Tweening;
 
 public class GameplayUIController : MonoBehaviour {
 
-	#region Public Properties
+    #region Public Properties
 
-	[SerializeField]
+    public delegate void GameplayUIDelegate();
+
+    public event GameplayUIDelegate OnGamePaused;
+
+    public event GameplayUIDelegate OnGameResumed;
+
+    #endregion
+
+    #region Private Properties
+
+    [SerializeField]
     private TextMeshProUGUI _levelLabel;
 
     [SerializeField]
@@ -16,6 +26,9 @@ public class GameplayUIController : MonoBehaviour {
 
     [SerializeField]
     private StarsPanelController _starsController;
+
+    [SerializeField]
+    private bool _interactionEnabled;
 
     #endregion
 
@@ -33,6 +46,14 @@ public class GameplayUIController : MonoBehaviour {
 
     #region Public
 
+    public bool InteractionEnabled
+    {
+        set
+        {
+            _interactionEnabled = value;
+        }
+    }
+
     public void SetLevel(LevelDefenition levelDefenition)
 	{
         if (levelDefenition != null)
@@ -49,20 +70,40 @@ public class GameplayUIController : MonoBehaviour {
 
     }
 
-    public void BackButtonAction()
+    public void PauseButtonAction()
 	{
-		FlowManager.Instance.LevelsSelectionScreen();
+        if (_interactionEnabled)
+        {
+            if (OnGamePaused != null)
+            {
+                OnGamePaused();
+            }
+            PopupsManager.Instance.DisplayPopup<GamePausedPopupController>(() =>
+            {
+                if (OnGameResumed != null)
+                {
+                    OnGameResumed();
+                }
+            });
+        }
 	}
 
 	public void ResetButtonAction()
 	{
-		FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+        if (_interactionEnabled)
+        {
+            FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+        }
+		
 	}
 
 	public void HintButtonAction()
 	{
-        GameSetupManager.Instance.UseHint = true;
-        FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+        if (_interactionEnabled)
+        {
+            GameSetupManager.Instance.UseHint = true;
+            FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+        }
     }
 
     public void Show()

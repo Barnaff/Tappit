@@ -137,7 +137,6 @@ public class PopupBaseController : MonoBehaviour
 
     public void ClosePopup()
     {
-        Debug.Log("close popup");
         if (_closePopupAction != null)
         {
             _closePopupAction();
@@ -176,7 +175,6 @@ public class PopupBaseController : MonoBehaviour
 
     public void SetCloseAction(System.Action closePopupAction)
     {
-        Debug.Log("set popup close action: " + closePopupAction);
         _closePopupAction = closePopupAction;
     }
 

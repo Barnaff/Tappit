@@ -118,17 +118,79 @@ public class BoardController : MonoBehaviour {
 
     public void FlipTile(TileController tileController)
     {
-        List<TileController> adjacentTiles = GetAdjacentTIles(tileController.Position);
+        List<TileController> tilesToFlip = GetAdjacentTIles(tileController.Position);
+        tilesToFlip.Add(tileController);
 
-        tileController.Flip(true, () =>
+        while (AddFlipsForSpecialTiles(tilesToFlip)) ;
+        
+
+        foreach (TileController tile in tilesToFlip)
         {
+            if (tile == tileController)
+            {
+                tileController.Flip(true, 0, () =>
+                {
 
-        });
-
-        foreach (TileController adjacentTile in adjacentTiles)
-        {
-            adjacentTile.Flip(true, null);
+                });
+            }
+            else
+            {
+                float flipDelay = Vector2.Distance(tileController.Position, tile.Position);
+                tile.Flip(true, flipDelay, null);
+            }
         }
+    }
+
+    private bool AddFlipsForSpecialTiles(List<TileController> tilesToFlip)
+    {
+        List<TileController> tilesToAdd = new List<TileController>();
+
+        foreach (TileController flippingTile in tilesToFlip)
+        {
+            switch (flippingTile.TileDefenition.TileType)
+            {
+                case eTileType.Empty:
+                case eTileType.Normal:
+                    {
+                        break;
+                    }
+                case eTileType.LineVertial:
+                    {
+                        foreach (TileController tile in _boardTiles)
+                        {
+                            if (tile.Position.x == flippingTile.Position.x)
+                            {
+                                if (!tilesToFlip.Contains(tile))
+                                {
+                                    tilesToAdd.Add(tile);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case eTileType.LineHorizontal:
+                    {
+                        foreach (TileController tile in _boardTiles)
+                        {
+                            if (tile.Position.y == flippingTile.Position.y)
+                            {
+                                if (!tilesToFlip.Contains(tile))
+                                {
+                                    tilesToAdd.Add(tile);
+                                }
+                            }
+                        }
+                        break;
+                    }
+            }
+        }
+
+        if (tilesToAdd.Count > 0)
+        {
+            tilesToFlip.AddRange(tilesToAdd);
+        }
+
+        return (tilesToAdd.Count > 0);
     }
 
     public Vector2 GetPositionForTileAtIndex(Vector2 tileIndex)
@@ -222,6 +284,8 @@ public class BoardController : MonoBehaviour {
 		newTileController.Position = new Vector2(x ,y);
 
         newTileController.SetFace(tileDefenition.IsFlipped);
+
+        newTileController.TileDefenition = tileDefenition;
 
         return newTileController;
 	}

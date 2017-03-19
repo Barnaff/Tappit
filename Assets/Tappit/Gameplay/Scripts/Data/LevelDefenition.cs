@@ -22,13 +22,6 @@ public class LevelDefenition
 	public int Stars1Steps;
 }
 
-[System.Serializable]
-public class ChepterDefenition
-{
-    public int ChepterID;
-
-    public List<LevelDefenition> Levels;
-}
 
 [System.Serializable]
 public class TileDefenition

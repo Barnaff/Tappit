@@ -33,6 +33,9 @@ public class GameplayController : MonoBehaviour {
     [SerializeField]
     private Material _skyboxMaterial;
 
+    [SerializeField]
+    private bool _isGamePaused;
+
     #endregion
 
     // Use this for initialization
@@ -49,6 +52,8 @@ public class GameplayController : MonoBehaviour {
 		{
 			Debug.LogError("ERROR - Cannot find gameplay UI in scene!");
 		}
+        _gameplayUI.OnGamePaused += OngamePausedHandler;
+        _gameplayUI.OnGameResumed += OnGameResumedHandler;
 
         _boardController.OnTileClicked += OnTileClickedHandler;
 
@@ -61,8 +66,6 @@ public class GameplayController : MonoBehaviour {
 
     public void ReloadLevel()
     {
-        Debug.Log("reload level");
-
         _useHints = false;
         _movesCount = 0;
         _levelCompleted = false;
@@ -76,7 +79,7 @@ public class GameplayController : MonoBehaviour {
         _boardController.BuildLevel(_selectedLevel);
         _gameplayUI.SetLevel(_selectedLevel);
         _gameplayUI.UpdateMovesCount(_movesCount);
-
+        _gameplayUI.InteractionEnabled = true;
         if (GameSetupManager.Instance.UseHint)
         {
             _useHints = true;
@@ -102,6 +105,7 @@ public class GameplayController : MonoBehaviour {
 
     private IEnumerator FinishedGameSequance()
     {
+        _gameplayUI.InteractionEnabled = false;
 		_levelCompleted = true;
         yield return new WaitForSeconds(1.0f);
 
@@ -194,7 +198,8 @@ public class GameplayController : MonoBehaviour {
             }
         }
 
-        if (canFlip)
+
+        if (canFlip && !_isGamePaused)
         {
             _movesCount++;
 
@@ -214,13 +219,22 @@ public class GameplayController : MonoBehaviour {
                     LevelFailed();
                 }
             }
-           
 
             if (_useHints)
             {
                 ShowNextHint();
             }
         }
+    }
+
+    private void OngamePausedHandler()
+    {
+        _isGamePaused = true;
+    }
+
+    private void OnGameResumedHandler()
+    {
+        _isGamePaused = false;
     }
 
     #endregion

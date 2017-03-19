@@ -64,5 +64,10 @@ public class LevelTileView : MonoBehaviour {
         
     }
 
+    public void Disable()
+    {
+        _tileBox.GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f);
+    }
+
     #endregion
 }
