@@ -23,14 +23,13 @@ public class TileController : MonoBehaviour {
 	private bool _isFlipped;
 
     [SerializeField]
-    private Vector3 _origianlPosition;
-
-    [SerializeField]
     private GameObject[] _tileIndicatorContainers;
 
 
     [SerializeField]
     private TileDefenition _tileDefenition;
+
+    private bool _isFlipping = false;
 
     #endregion
 
@@ -53,9 +52,9 @@ public class TileController : MonoBehaviour {
             this.transform.rotation = Quaternion.Euler(rotation);
         }
 
-        _origianlPosition = this.transform.position;
         this.transform.rotation = Quaternion.Euler((Random.insideUnitSphere * 2.0f) + this.transform.rotation.eulerAngles);
 
+        _isFlipping = false;
     }
 
 	public void Flip(bool animated, float delay, System.Action completionAction)
@@ -130,10 +129,13 @@ public class TileController : MonoBehaviour {
 
 	void OnMouseDown()
 	{
-		if (OnTileClicked != null)
-		{
-			OnTileClicked(this);
-		}
+        if (!_isFlipping)
+        {
+            if (OnTileClicked != null)
+            {
+                OnTileClicked(this);
+            }
+        }
 	}
 
     #endregion
@@ -143,6 +145,7 @@ public class TileController : MonoBehaviour {
 
     private IEnumerator FlipTileCorutine(bool animated, float delay, System.Action completionAction)
     {
+        _isFlipping = true;
         _isFlipped = !_isFlipped;
 
         DOTween.Complete(this.transform);
@@ -167,7 +170,7 @@ public class TileController : MonoBehaviour {
         {
             completionAction();
         }
-
+        _isFlipping = false;
     }
 
     #endregion

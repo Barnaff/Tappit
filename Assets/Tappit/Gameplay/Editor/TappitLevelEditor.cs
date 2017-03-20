@@ -133,6 +133,9 @@ public class TappitLevelEditor : EditorWindow {
                             ExportLevelLayout();
                         }
 
+                        _currentLevel.TopTutorialTitle = EditorGUILayout.TextField("Top Tutorial", _currentLevel.TopTutorialTitle);
+                        _currentLevel.BottomTutorialTitle = EditorGUILayout.TextField("Bottom Tutorial", _currentLevel.BottomTutorialTitle);
+
                         GUILayout.BeginHorizontal();
                         {
                             _currentLevel.ChecpterID = EditorGUILayout.IntField( _currentLevel.ChecpterID);

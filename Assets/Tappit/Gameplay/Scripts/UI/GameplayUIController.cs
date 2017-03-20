@@ -30,6 +30,12 @@ public class GameplayUIController : MonoBehaviour {
     [SerializeField]
     private bool _interactionEnabled;
 
+    [SerializeField]
+    private TextMeshProUGUI _topTutorialLabel;
+
+    [SerializeField]
+    private TextMeshProUGUI _bottomTutorialLabel;
+
     #endregion
 
 
@@ -59,13 +65,32 @@ public class GameplayUIController : MonoBehaviour {
         if (levelDefenition != null)
         {
             _levelLabel.text = levelDefenition.ChecpterID.ToString() + " - " + levelDefenition.LevelID.ToString();
+
+            if (!string.IsNullOrEmpty(levelDefenition.TopTutorialTitle))
+            {
+                _topTutorialLabel.gameObject.SetActive(true);
+                _topTutorialLabel.text = levelDefenition.TopTutorialTitle;
+            }
+            else
+            {
+                _topTutorialLabel.gameObject.SetActive(false);
+            }
+
+            if (!string.IsNullOrEmpty(levelDefenition.BottomTutorialTitle))
+            {
+                _bottomTutorialLabel.gameObject.SetActive(true);
+                _bottomTutorialLabel.text = levelDefenition.BottomTutorialTitle;
+            }
+            else
+            {
+                _bottomTutorialLabel.gameObject.SetActive(false);
+            }
         }
-	}
+    }
 
     public void UpdateMovesCount(int movesCount)
     {
         int movesLeft = MovesLeft(movesCount);
-
         _movesLabel.text = movesLeft.ToString();
 
     }

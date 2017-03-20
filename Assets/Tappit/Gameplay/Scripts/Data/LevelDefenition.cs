@@ -20,6 +20,10 @@ public class LevelDefenition
 	public int Stars2Steps;
 
 	public int Stars1Steps;
+
+    public string TopTutorialTitle;
+
+    public string BottomTutorialTitle;
 }
 
 

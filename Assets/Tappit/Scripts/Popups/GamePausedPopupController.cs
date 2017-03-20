@@ -31,6 +31,10 @@ public class GamePausedPopupController : PopupBaseController {
         canvasGroup.alpha = 0f;
         canvasGroup.DOFade(1f, 0.5f);
 
+        UnityStandardAssets.ImageEffects.BlurOptimized blur = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.BlurOptimized>();
+        blur.enabled = true;
+
+
         for (int i = 0; i < _fadeGroups.Length; i++)
         {
             CanvasGroup fadeItem = _fadeGroups[i];
@@ -41,6 +45,9 @@ public class GamePausedPopupController : PopupBaseController {
 
     private void DisplayCloseAnimation(System.Action completionAction)
     {
+        UnityStandardAssets.ImageEffects.BlurOptimized blur = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.BlurOptimized>();
+        blur.enabled = false;
+
         CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
         canvasGroup.DOFade(0f, 0.5f).OnComplete(() =>
         {
