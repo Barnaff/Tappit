@@ -51,7 +51,7 @@ public class LevelSelectionController : MenuScreenBaseController {
 
     public void BackButtonAction()
     {
-        
+        MenuScreensController.Instance.MainMenu();
     }
 
     public void PreviewsChepterButtonAction()
