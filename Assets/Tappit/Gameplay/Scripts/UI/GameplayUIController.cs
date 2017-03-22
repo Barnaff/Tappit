@@ -126,8 +126,17 @@ public class GameplayUIController : MonoBehaviour {
 	{
         if (_interactionEnabled)
         {
-            GameSetupManager.Instance.UseHint = true;
-            FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+            if (OnGamePaused != null)
+            {
+                OnGamePaused();
+            }
+            PopupsManager.Instance.DisplayPopup<HintsShopPopupController>(()=>
+            {
+                if (OnGameResumed != null)
+                {
+                    OnGameResumed();
+                }
+            });
         }
     }
 
