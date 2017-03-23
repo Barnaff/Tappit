@@ -32,6 +32,12 @@ public class LevelFailedPopupController : PopupBaseController {
         canvasGroup.alpha = 0f;
         canvasGroup.DOFade(1f, 0.5f);
 
+        UnityStandardAssets.ImageEffects.Blur blurEffect = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.Blur>();
+        if (blurEffect != null)
+        {
+            blurEffect.enabled = true;
+        }
+
         for (int i = 0; i < _fadeGroups.Length; i++)
         {
             CanvasGroup fadeItem = _fadeGroups[i];
@@ -42,6 +48,12 @@ public class LevelFailedPopupController : PopupBaseController {
 
     private void DisplayCloseAnimation(System.Action completionAction)
     {
+        UnityStandardAssets.ImageEffects.Blur blurEffect = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.Blur>();
+        if (blurEffect != null)
+        {
+            blurEffect.enabled = false;
+        }
+
         CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
         canvasGroup.DOFade(0f, 0.5f).OnComplete(() =>
         {

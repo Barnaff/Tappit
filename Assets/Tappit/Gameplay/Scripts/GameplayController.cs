@@ -36,6 +36,9 @@ public class GameplayController : MonoBehaviour {
     [SerializeField]
     private bool _isGamePaused;
 
+    [SerializeField]
+    private GameObject _explosionPrefab;
+
     #endregion
 
     // Use this for initialization
@@ -111,13 +114,23 @@ public class GameplayController : MonoBehaviour {
 
         _boardController.DisplayOutro();
 
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.9f);
 
+        GameObject explosion =  Lean.LeanPool.Spawn(_explosionPrefab, Vector3.zero, Quaternion.identity);
+
+        yield return new WaitForSeconds(1.0f);
+
+       
         yield return StartCoroutine(ClearGameplayContents());
         LevelCompletedPopupController levelCompletionPopup = PopupsManager.Instance.DisplayPopup<LevelCompletedPopupController>();
         levelCompletionPopup.SetMovesCount(_movesCount);
 
         AccountManager.Instance.FinishedLevel(_selectedLevel);
+
+        yield return new WaitForSeconds(1.0f);
+
+        Lean.LeanPool.Despawn(explosion);
+
     }
 
 	private IEnumerator LevelFailedSequance()
@@ -131,7 +144,7 @@ public class GameplayController : MonoBehaviour {
     private IEnumerator ClearGameplayContents()
     {
         _gameplayUI.Hide();
-        _boardController.gameObject.SetActive(false);
+      //  _boardController.gameObject.SetActive(false);
 
         if (_hintIndicator != null)
         {
@@ -199,7 +212,7 @@ public class GameplayController : MonoBehaviour {
         }
 
 
-        if (canFlip && !_isGamePaused)
+        if (canFlip && !_isGamePaused && !_levelCompleted)
         {
             _movesCount++;
 

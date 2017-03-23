@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class LevelSelectionController : MenuScreenBaseController {
 
@@ -21,6 +22,12 @@ public class LevelSelectionController : MenuScreenBaseController {
 
     [SerializeField]
     private Text _chepterTitleLabel;
+
+    [SerializeField]
+    private Button _nextPageButton;
+
+    [SerializeField]
+    private Button _previusPageButton;
 
 
     #endregion
@@ -79,6 +86,22 @@ public class LevelSelectionController : MenuScreenBaseController {
 
     private void GenerateLevelTiles(LevelTileController.eLevelTileAnimation transition)
     {
+        if (_currentChepterIndex == 0)
+        {
+            _nextPageButton.image.DOFade(1f, 0.5f);
+            _previusPageButton.image.DOFade(0f, 0.5f);
+        }
+        else if (_currentChepterIndex * LevelsSettigs.Instance.LevelsInChepter + LevelsSettigs.Instance.LevelsInChepter >= LevelsSettigs.Instance.Levels.Count)
+        {
+            _nextPageButton.image.DOFade(0f, 0.5f);
+            _previusPageButton.image.DOFade(1f, 0.5f);
+        }
+        else
+        {
+            _nextPageButton.image.DOFade(1f, 0.5f);
+            _previusPageButton.image.DOFade(1f, 0.5f);
+        }
+
         if (_activeLevelsTiles.Count == 0)
         {
             for (int i = 0; i < LevelsSettigs.Instance.LevelsInChepter; i++)
