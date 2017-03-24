@@ -55,6 +55,8 @@ public class TileController : MonoBehaviour {
         this.transform.rotation = Quaternion.Euler((Random.insideUnitSphere * 2.0f) + this.transform.rotation.eulerAngles);
 
         _isFlipping = false;
+
+        this.gameObject.GetComponent<Collider>().enabled = true;
     }
 
 	public void Flip(bool animated, float delay, System.Action completionAction)
@@ -148,12 +150,13 @@ public class TileController : MonoBehaviour {
         _isFlipping = true;
         _isFlipped = !_isFlipped;
 
-        DOTween.Complete(this.transform);
+       DOTween.Complete(this.transform);
 
         delay *= 0.1f;
 
         if (animated)
         {
+            this.gameObject.GetComponent<Collider>().enabled = false;
             this.transform.DOMoveZ(-3f, 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative().SetDelay(delay);
             this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(delay + 0.2f);
 
@@ -165,6 +168,12 @@ public class TileController : MonoBehaviour {
             rotation.y += 180f;
             this.transform.rotation = Quaternion.Euler(rotation);
         }
+
+        if (animated)
+        {
+            this.gameObject.GetComponent<Collider>().enabled = true;
+        }
+        
 
         if (completionAction != null)
         {
