@@ -31,6 +31,14 @@ public class TileController : MonoBehaviour {
 
     private bool _isFlipping = false;
 
+
+    [Header("Sounds")]
+    [SerializeField]
+    private SoundResource _beginFLipSoundEffect;
+
+    [SerializeField]
+    private SoundResource _flipSoundEffect;
+
     #endregion
 
 
@@ -156,9 +164,24 @@ public class TileController : MonoBehaviour {
 
         if (animated)
         {
+           
+
             this.gameObject.GetComponent<Collider>().enabled = false;
-            this.transform.DOMoveZ(-3f, 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative().SetDelay(delay);
-            this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(delay + 0.2f);
+            this.transform.DOMoveZ(-3f, 0.3f).SetLoops(2, LoopType.Yoyo).SetRelative().SetDelay(delay).OnPlay(()=>
+            {
+                if (_beginFLipSoundEffect != null)
+                {
+                    _beginFLipSoundEffect.Play();
+                }
+            });
+            this.transform.DOLocalRotate(new Vector3(0, 180f, 0), 0.5f).SetRelative().SetDelay(delay + 0.2f).OnStart(()=>
+            {
+                if (_flipSoundEffect != null)
+                {
+                    _flipSoundEffect.Play();
+                }
+            });
+
 
             yield return new WaitForSeconds(delay + 0.7f);
         }
