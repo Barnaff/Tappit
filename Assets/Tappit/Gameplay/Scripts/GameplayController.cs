@@ -39,6 +39,9 @@ public class GameplayController : MonoBehaviour {
     [SerializeField]
     private GameObject _explosionPrefab;
 
+    [SerializeField]
+    private SoundResource _levelCompleteSoundEffect;
+
     #endregion
 
     // Use this for initialization
@@ -117,6 +120,11 @@ public class GameplayController : MonoBehaviour {
         yield return new WaitForSeconds(0.9f);
 
         GameObject explosion =  Lean.LeanPool.Spawn(_explosionPrefab, Vector3.zero, Quaternion.identity);
+
+        if (_levelCompleteSoundEffect != null)
+        {
+            _levelCompleteSoundEffect.Play();
+        }
 
         yield return new WaitForSeconds(1.0f);
 

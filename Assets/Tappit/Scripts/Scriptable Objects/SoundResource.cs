@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundResource : ScriptableObject {
+public class SoundResource : ScriptableObject
+{
 
     public AudioClip[] Clips;
 
@@ -18,12 +19,14 @@ public class SoundResource : ScriptableObject {
 
     public float Delay = 0f;
 
-    public AudioSource Play()
+    public AudioSource Play(float volumeMultiplier = 1f, float pitchMultiplier = 1f)
     {
         AudioClip audioClip = Clips[Random.Range(0, Clips.Length)];
 
-        AudioSource audioSource = SoundManager.PlaySFX(audioClip, Loop, Delay, Volume + Random.Range(0f, VolumeVariant), Pitch + Random.Range(0f, PitchVariant));
+        AudioSource audioSource = SoundManager.PlaySFX(audioClip, Loop, Delay, volumeMultiplier * (Volume + Random.Range(0f, VolumeVariant))
+            , pitchMultiplier * (Pitch + Random.Range(0f, PitchVariant)));
 
         return audioSource;
     }
+
 }

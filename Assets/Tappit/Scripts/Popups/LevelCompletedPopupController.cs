@@ -30,6 +30,12 @@ public class LevelCompletedPopupController : PopupBaseController {
     [SerializeField]
     private CanvasGroup[] _fadeGroups;
 
+    [SerializeField]
+    private GameObject _starExplosionEffectPrefab;
+
+    [SerializeField]
+    private SoundResource _starShineSouneEffect;
+
     #endregion
 
 
@@ -37,6 +43,11 @@ public class LevelCompletedPopupController : PopupBaseController {
 
     void Start()
     {
+        Canvas canvas = this.GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            canvas.worldCamera = Camera.main;
+        }
         _levelLabel.text = GameSetupManager.Instance.SelectedLevel.ChecpterID.ToString() + " - " + GameSetupManager.Instance.SelectedLevel.LevelID.ToString();
     }
 
@@ -86,6 +97,7 @@ public class LevelCompletedPopupController : PopupBaseController {
         canvasGroup.alpha = 0f;
         canvasGroup.DOFade(1f, 0.5f);
 
+        float pitch = 1f;
         for (int i = 0; i < _starsImages.Length; i++)
         {
             if (i < _starsCount)
@@ -94,6 +106,12 @@ public class LevelCompletedPopupController : PopupBaseController {
                 starImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f).SetDelay((i * 0.5f) + 0.5f).OnStart(() =>
                 {
                     starImage.sprite = _fullStarSprite;
+
+                    GameObject explosionEffect = Instantiate(_starExplosionEffectPrefab, starImage.transform.position, Quaternion.identity);
+                    explosionEffect.transform.SetParent(starImage.gameObject.transform);
+
+                    pitch += 0.1f;
+                    _starShineSouneEffect.Play(1f, pitch);
                 });
             }
             else
