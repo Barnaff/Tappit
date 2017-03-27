@@ -36,6 +36,15 @@ public class GameplayUIController : MonoBehaviour {
     [SerializeField]
     private TextMeshProUGUI _bottomTutorialLabel;
 
+    [SerializeField]
+    private TextMeshProUGUI _hintsCountLabel;
+
+    [SerializeField]
+    private GameObject _hintsAvalableMark;
+
+
+    private LevelDefenition _currentLevel;
+
     #endregion
 
 
@@ -45,6 +54,13 @@ public class GameplayUIController : MonoBehaviour {
     {
         CanvasGroup canvasGroup = this.gameObject.GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0f;
+
+        AccountManager.Instance.OnHintsCountUpdated += OnHintsCountUpdatedHandler;
+    }
+
+    void OnDestroy()
+    {
+        AccountManager.Instance.OnHintsCountUpdated -= OnHintsCountUpdatedHandler;
     }
 
     #endregion
@@ -62,29 +78,33 @@ public class GameplayUIController : MonoBehaviour {
 
     public void SetLevel(LevelDefenition levelDefenition)
 	{
-        if (levelDefenition != null)
+        _currentLevel = levelDefenition;
+        if (_currentLevel != null)
         {
-            _levelLabel.text = levelDefenition.ChecpterID.ToString() + " - " + levelDefenition.LevelID.ToString();
+            _levelLabel.text = _currentLevel.ChecpterID.ToString() + " - " + _currentLevel.LevelID.ToString();
 
-            if (!string.IsNullOrEmpty(levelDefenition.TopTutorialTitle))
+            if (!string.IsNullOrEmpty(_currentLevel.TopTutorialTitle))
             {
                 _topTutorialLabel.gameObject.SetActive(true);
-                _topTutorialLabel.text = levelDefenition.TopTutorialTitle;
+                _topTutorialLabel.text = _currentLevel.TopTutorialTitle;
             }
             else
             {
                 _topTutorialLabel.gameObject.SetActive(false);
             }
 
-            if (!string.IsNullOrEmpty(levelDefenition.BottomTutorialTitle))
+            if (!string.IsNullOrEmpty(_currentLevel.BottomTutorialTitle))
             {
                 _bottomTutorialLabel.gameObject.SetActive(true);
-                _bottomTutorialLabel.text = levelDefenition.BottomTutorialTitle;
+                _bottomTutorialLabel.text = _currentLevel.BottomTutorialTitle;
             }
             else
             {
                 _bottomTutorialLabel.gameObject.SetActive(false);
             }
+
+            UpdateHintsView();
+
         }
     }
 
@@ -126,17 +146,28 @@ public class GameplayUIController : MonoBehaviour {
 	{
         if (_interactionEnabled)
         {
-            if (OnGamePaused != null)
+            if (AccountManager.Instance.HintsCount() > 0 || AccountManager.Instance.HasHintForLevel(_currentLevel))
             {
-                OnGamePaused();
-            }
-            PopupsManager.Instance.DisplayPopup<HintsShopPopupController>(()=>
-            {
-                if (OnGameResumed != null)
+                if (AccountManager.Instance.UseHint(_currentLevel))
                 {
-                    OnGameResumed();
+                    GameSetupManager.Instance.UseHint = true;
+                    FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
                 }
-            });
+            }
+            else
+            {
+                if (OnGamePaused != null)
+                {
+                    OnGamePaused();
+                }
+                PopupsManager.Instance.DisplayPopup<HintsShopPopupController>(() =>
+                {
+                    if (OnGameResumed != null)
+                    {
+                        OnGameResumed();
+                    }
+                });
+            }
         }
     }
 
@@ -180,6 +211,39 @@ public class GameplayUIController : MonoBehaviour {
             }
         }
         return movesLeft;
+    }
+
+    private void UpdateHintsView()
+    {
+        if (AccountManager.Instance.HasHintForLevel(_currentLevel))
+        {
+            _hintsAvalableMark.SetActive(true);
+            _hintsCountLabel.gameObject.SetActive(false);
+        }
+        else
+        {
+            _hintsAvalableMark.SetActive(false);
+            int hintsCount = AccountManager.Instance.HintsCount();
+            if (hintsCount > 0)
+            {
+                _hintsCountLabel.gameObject.SetActive(true);
+                _hintsCountLabel.text = hintsCount.ToString();
+            }
+            else
+            {
+                _hintsCountLabel.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    #endregion
+
+
+    #region Events
+
+    private void OnHintsCountUpdatedHandler()
+    {
+        UpdateHintsView();
     }
 
     #endregion

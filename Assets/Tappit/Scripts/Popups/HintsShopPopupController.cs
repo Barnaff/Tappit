@@ -63,8 +63,7 @@ public class HintsShopPopupController : PopupBaseController {
 
     private void UseHint()
     {
-        GameSetupManager.Instance.UseHint = true;
-        FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
+        AccountManager.Instance.AddHints(1);
         DisplayCloseAnimation(() =>
         {
             ClosePopup();
