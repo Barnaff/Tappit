@@ -4,8 +4,8 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 
-public class GamePausedPopupController : PopupBaseController {
-
+public class SettingsPopupController : PopupBaseController
+{
     #region Private Properties
 
     [SerializeField]
@@ -76,31 +76,7 @@ public class GamePausedPopupController : PopupBaseController {
     #endregion
 
 
-    #region User Interactions
-
-
-    public void MenuButtonAction()
-    {
-        FlowManager.Instance.LevelsSelectionScreen();
-    }
-
-    public void PlayAgainButtonAction()
-    {
-        DisplayCloseAnimation(() =>
-        {
-            FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
-
-            ClosePopup();
-        });
-    }
-
-    public void ResumeButtonAction()
-    {
-        DisplayCloseAnimation(() =>
-        {
-            ClosePopup();
-        });
-    }
+    #region Public - UI Inseractions
 
     public void AudioToggleButtonAction()
     {
@@ -110,6 +86,20 @@ public class GamePausedPopupController : PopupBaseController {
     public void MusicToggleButtonAction()
     {
         AccountManager.Instance.MusicToggle = _musicToggleButton.isOn;
+    }
+
+    public void ClearProgressButtonAction()
+    {
+        PlayerPrefsUtil.DeleteAll();
+        PlayerPrefsUtil.ClearCache();
+    }
+
+    public void CloseButtonAction()
+    {
+        DisplayCloseAnimation(() =>
+        {
+            ClosePopup();
+        });
     }
 
     #endregion

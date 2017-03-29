@@ -12,6 +12,11 @@ public class MainMenuController : MenuScreenBaseController {
         MenuScreensController.Instance.LevelSelection();
     }
 
+    public void SettingsButtonAction()
+    {
+        PopupsManager.Instance.DisplayPopup<SettingsPopupController>();
+    }
+
 	#endregion
 
 }

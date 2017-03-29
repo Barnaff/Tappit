@@ -93,12 +93,12 @@ public class MenuScreenBaseController : MonoBehaviour
 
 	#region Public
 
-	public void Show()
+	public virtual void Show()
 	{
 		this.gameObject.SetActive(true);
 	}
 
-	public void Hide()
+	public virtual void Hide()
 	{
 		this.gameObject.SetActive(false);
 	}

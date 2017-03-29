@@ -82,7 +82,32 @@ public class LevelSelectionController : MenuScreenBaseController {
     #endregion
 
 
+    #region MenuScreenBaseController Subclass
+
+    public override void Show()
+    {
+        base.Show();
+    }
+
+    #endregion
+
+
     #region Private
+
+    private void DisplayEnterAnimation()
+    {
+        foreach (LevelTileController levelTile in _activeLevelsTiles)
+        {
+            float delay = (levelTile.LevelDefenition.LevelID - 1) % 4;
+
+            Vector3 endPosition = levelTile.transform.position;
+            Vector3 endRotation = levelTile.transform.rotation.eulerAngles;
+
+            levelTile.transform.position = endPosition + new Vector3(Screen.width, 0, 0);
+
+            levelTile.transform.DOMove(endPosition, 1f).SetDelay(delay);
+        }
+    }
 
     private void GenerateLevelTiles(LevelTileController.eLevelTileAnimation transition)
     {

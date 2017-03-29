@@ -26,10 +26,19 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
     [SerializeField]
     private List<int> _hintsUsed;
 
+    [SerializeField]
+    private bool _audioToggle;
+
+    [SerializeField]
+    private bool _musicToggle;
+
     private const string LAST_LEVEL_KEY = "lastLevel";
     private const string TOP_LEVEL_KEY = "topLevel";
     private const string HINTS_COUNT_KEY = "hintsCount";
     private const string HINTS_USED_KEY = "hintsUsed";
+
+    private const string AUDIO_TOGGLE_KEY = "audioToggle";
+    private const string MUSIC_TOGGLE_KEY = "musicToggleKey";
 
     #endregion
 
@@ -71,6 +80,27 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
         {
             _hintsUsed = new List<int>();
         }
+
+        if (PlayerPrefsUtil.HasKey(AUDIO_TOGGLE_KEY))
+        {
+            _audioToggle = PlayerPrefsUtil.GetBool(AUDIO_TOGGLE_KEY);
+        }
+        else
+        {
+            _audioToggle = true;
+        }
+
+        if (PlayerPrefsUtil.HasKey(MUSIC_TOGGLE_KEY))
+        {
+            _musicToggle = PlayerPrefsUtil.GetBool(MUSIC_TOGGLE_KEY);
+        }
+        else
+        {
+            _musicToggle = true;
+        }
+
+        AudioToggle = _audioToggle;
+        MusicToggle = _musicToggle;
     }
 
     #endregion
@@ -186,6 +216,34 @@ public class AccountManager : Kobapps.Singleton<AccountManager> {
                 PlayerPrefsUtil.SetInt(LAST_LEVEL_KEY, value);
             }
             _lastLevelID = value;
+        }
+    }
+
+    public bool AudioToggle
+    {
+        get
+        {
+            return _audioToggle;
+        }
+        set
+        {
+            _audioToggle = value;
+            PlayerPrefsUtil.SetBool(AUDIO_TOGGLE_KEY, _audioToggle);
+            SoundManager.MuteSFX(!_audioToggle);
+        }
+    }
+
+    public bool MusicToggle
+    {
+        get
+        {
+            return _musicToggle;
+        }
+        set
+        {
+            _musicToggle = value;
+            PlayerPrefsUtil.SetBool(MUSIC_TOGGLE_KEY, _musicToggle);
+            SoundManager.MuteMusic(!_musicToggle);
         }
     }
    
