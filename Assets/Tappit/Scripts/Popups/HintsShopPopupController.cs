@@ -30,6 +30,9 @@ public class HintsShopPopupController : PopupBaseController {
     // Use this for initialization
     void Start ()
     {
+        _watchVideoButton.SetActive(false);
+        _shopItemButton.SetActive(false);
+        _closeButton.SetActive(false);
         PopulateShop();
         DisplayIntroAnimation();
 	}
@@ -41,12 +44,10 @@ public class HintsShopPopupController : PopupBaseController {
 
     public void WatchVideoButtonAction()
     {
-        UseHint();
-    }
-
-    public void BuyHintsPackButtonAction()
-    {
-        UseHint();
+        AdsManager.Instance.PlayVideoAd((sucsess) =>
+        {
+            AddHints(1);
+        });
     }
 
     public void CloseButtonAction()
@@ -61,9 +62,10 @@ public class HintsShopPopupController : PopupBaseController {
 
     #region Private
 
-    private void UseHint()
+
+    private void AddHints(int amount)
     {
-        AccountManager.Instance.AddHints(1);
+        AccountManager.Instance.AddHints(amount);
         DisplayCloseAnimation(() =>
         {
             ClosePopup();
@@ -72,7 +74,38 @@ public class HintsShopPopupController : PopupBaseController {
 
     private void PopulateShop()
     {
+        if (AdsManager.Instance.CanWatchVideoAd())
+        {
+            GameObject watchVideoButton = Instantiate(_watchVideoButton);
+            watchVideoButton.transform.SetParent(_buttonsContent);
+            watchVideoButton.transform.localScale = Vector3.one;
+            watchVideoButton.SetActive(true);
+            _fadeGroups.Add(watchVideoButton.GetComponent<CanvasGroup>());
+        }
 
+        List<ShopItem> shopItems = ShopManager.Instance.GetShopItems();
+
+        for (int i = 0; i < shopItems.Count; i++)
+        {  
+            GameObject shopItemButton = Instantiate(_shopItemButton);
+            shopItemButton.transform.SetParent(_buttonsContent);
+            shopItemButton.transform.localScale = Vector3.one;
+            shopItemButton.SetActive(true);
+            _fadeGroups.Add(shopItemButton.GetComponent<CanvasGroup>());
+
+            ShopitemButtonController shopItemButtonController = shopItemButton.GetComponent<ShopitemButtonController>();
+            if (shopItemButtonController != null)
+            {
+                shopItemButtonController.SetShopItem(shopItems[i]);
+                shopItemButtonController.OnShopItemClick += OnShopItemClickHandler;
+            }
+        }
+
+        GameObject closeButton = Instantiate(_closeButton);
+        closeButton.transform.SetParent(_buttonsContent);
+        closeButton.transform.localScale = Vector3.one;
+        closeButton.SetActive(true);
+        _fadeGroups.Add(closeButton.GetComponent<CanvasGroup>());
     }
 
     private void DisplayIntroAnimation()
@@ -114,4 +147,21 @@ public class HintsShopPopupController : PopupBaseController {
     }
 
     #endregion
+
+
+    #region Events
+
+    private void OnShopItemClickHandler(ShopItem shopItem)
+    {
+        ShopManager.Instance.BuyShopItem(shopItem, (sucsess)=>
+        {
+            if (sucsess)
+            {
+                AddHints(shopItem.Amount);
+            }
+        });
+    }
+
+    #endregion
 }
+

@@ -21,6 +21,14 @@ public class LoaderController : MonoBehaviour {
 
         yield return 0f;
 
+        ShopManager.Instance.Init();
+
+        yield return 0f;
+
+        AdsManager.Instance.Init();
+
+        yield return 0f;
+
         FlowManager.Instance.FirstScreen();
     }
 
