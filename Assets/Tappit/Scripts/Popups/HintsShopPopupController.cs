@@ -46,7 +46,11 @@ public class HintsShopPopupController : PopupBaseController {
     {
         AdsManager.Instance.PlayVideoAd((sucsess) =>
         {
-            AddHints(1);
+			if (sucsess)
+			{
+				AddHints(1);
+			}
+           
         });
     }
 
