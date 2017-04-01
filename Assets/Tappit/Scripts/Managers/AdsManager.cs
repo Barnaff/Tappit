@@ -16,21 +16,20 @@ public class AdsManager : Kobapps.Singleton<AdsManager> {
 
     public void Init()
     {
-
+		
     }
 
     public bool CanWatchVideoAd()
     {
-        return true;
+		if (Advertisement.IsReady("rewardedVideo"))
+		{
+			return true;
+		}
+        return false;
     }
 
     public void PlayVideoAd(System.Action <bool> completionAction)
     {
-        if (completionAction != null)
-        {
-            completionAction(true);
-        }
-
         if (Advertisement.IsReady("rewardedVideo"))
         {
             var options = new ShowOptions { resultCallback = (result)=>
@@ -41,9 +40,6 @@ public class AdsManager : Kobapps.Singleton<AdsManager> {
                     case ShowResult.Finished:
                             {
                                 Debug.Log("The ad was successfully shown.");
-                    //
-                    // YOUR CODE TO REWARD THE GAMER
-                    // Give coins etc.
                                 sucsess = true;
                                 break;
                             }
@@ -58,22 +54,13 @@ public class AdsManager : Kobapps.Singleton<AdsManager> {
                                 break;
                             }
 
-                            if (completionAction != null)
-                            {
-                                completionAction(true);
-                            }
                     }
-            }
+					if (completionAction != null)
+					{
+						completionAction(true);
+					}
+           		 }
             };
-            Advertisement.Show("rewardedVideo", options);
-        }
-    }
-
-    public void ShowRewardedAd()
-    {
-        if (Advertisement.IsReady("rewardedVideo"))
-        {
-            var options = new ShowOptions { resultCallback = HandleShowResult };
             Advertisement.Show("rewardedVideo", options);
         }
     }
