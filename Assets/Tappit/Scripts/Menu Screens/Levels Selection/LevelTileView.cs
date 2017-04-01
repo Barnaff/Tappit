@@ -25,14 +25,37 @@ public class LevelTileView : MonoBehaviour {
     [SerializeField]
     private GameObject _tileBox;
 
+    [SerializeField]
+    private Texture2D _tileTexture;
+
+    [SerializeField]
+    private Material _tileMaterial;
+
+    [SerializeField]
+    private Material _selectedTileMaterial;
+
     #endregion
 
 
     #region Public
 
-    public void SetLevel(int levelID, int starsCount, bool isLocked)
+    public void SetLevel(int levelID, int starsCount, bool isSelected, bool isLocked)
     {
         _levelLabel.text = levelID.ToString();
+
+        
+
+        if (isSelected)
+        {
+            Debug.Log("selected level " + levelID);
+            _tileBox.GetComponent<Renderer>().material = _selectedTileMaterial;
+        }
+        else
+        {
+            _tileBox.GetComponent<Renderer>().material = _tileMaterial;
+        }
+
+        _tileBox.GetComponent<Renderer>().material.mainTexture = _tileTexture;
 
         if (isLocked)
         {
@@ -61,7 +84,6 @@ public class LevelTileView : MonoBehaviour {
                 }
             }
         }
-        
     }
 
     public void Disable()

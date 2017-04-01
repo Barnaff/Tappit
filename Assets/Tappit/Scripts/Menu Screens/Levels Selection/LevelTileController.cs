@@ -43,7 +43,7 @@ public class LevelTileController : MonoBehaviour {
 
     #region Public
 
-    public void SetLevel(LevelDefenition levelDefenition, eLevelTileAnimation tranistion)
+    public void SetLevel(LevelDefenition levelDefenition, bool isSelected, eLevelTileAnimation tranistion)
     {
         _levelDefenition = levelDefenition;
 
@@ -86,7 +86,7 @@ public class LevelTileController : MonoBehaviour {
         int starsCount = AccountManager.Instance.StarsForLevel(_levelDefenition);
         bool isLevelUnlocked = AccountManager.Instance.IsLevelUnlocked(_levelDefenition);
 
-        _currentLevelView.SetLevel(_levelDefenition.LevelID, starsCount, !isLevelUnlocked);
+        _currentLevelView.SetLevel(_levelDefenition.LevelID, starsCount, isSelected, !isLevelUnlocked);
 
     }
 

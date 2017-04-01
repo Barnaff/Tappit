@@ -29,6 +29,8 @@ public class LevelSelectionController : MenuScreenBaseController {
     [SerializeField]
     private Button _previusPageButton;
 
+    [SerializeField]
+    private CanvasGroup _levelSelectionCanvsGroup;
 
     #endregion
 
@@ -142,8 +144,10 @@ public class LevelSelectionController : MenuScreenBaseController {
             {
                 LevelTileController tileController = _activeLevelsTiles[i];
 
-                int levelIndex = _currentChepterIndex * LevelsSettigs.Instance.LevelsInChepter + i;
-                tileController.SetLevel(LevelsSettigs.Instance.Levels[levelIndex], transition);
+                int levelIndex = _currentChepterIndex * LevelsSettigs.Instance.LevelsInChepter + i; 
+                LevelDefenition levelDefenition = LevelsSettigs.Instance.Levels[levelIndex];
+                bool isSelected = AccountManager.Instance.LastPlayedLevelID == levelDefenition.LevelID;
+                tileController.SetLevel(LevelsSettigs.Instance.Levels[levelIndex], isSelected, transition);
             }
         }
 
@@ -160,7 +164,8 @@ public class LevelSelectionController : MenuScreenBaseController {
         {
             transition = LevelTileController.eLevelTileAnimation.NoneFlipped;
         }
-		newTile.SetLevel(levelDefenition, transition);
+        bool isSelected = AccountManager.Instance.LastPlayedLevelID == levelDefenition.LevelID;
+        newTile.SetLevel(levelDefenition, isSelected, transition);
 		newTile.OnLevelTileSelected += LevelTileSelectedHandler;
 		return newTile;
 	}
@@ -170,8 +175,19 @@ public class LevelSelectionController : MenuScreenBaseController {
         bool isUnlocked = AccountManager.Instance.IsLevelUnlocked(levelTileController.LevelDefenition);
         if (isUnlocked)
         {
-            FlowManager.Instance.StartLevel(levelTileController.LevelDefenition);
+            StartCoroutine(LevelSeelctedCorutine(levelTileController.LevelDefenition));
         }
+    }
+
+    private IEnumerator LevelSeelctedCorutine(LevelDefenition selectedLevel)
+    {
+        _levelSelectionCanvsGroup.DOFade(0f, 0.5f);
+
+        _levelsTilesContent.DOMoveZ(-11, 1f);
+
+        yield return new WaitForSeconds(0.5f);
+
+        FlowManager.Instance.StartLevel(selectedLevel);
     }
 
     #endregion
