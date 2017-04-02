@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 4a736a5c806815149a70d13edc469bc1
+timeCreated: 1491161282
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Bungee Hairline
+  fontNames:
+  - Bungee Hairline
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

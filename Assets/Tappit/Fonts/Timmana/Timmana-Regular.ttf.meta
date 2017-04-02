@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 8471132f6c41e554eaae42ad82a4cae6
+timeCreated: 1491161282
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Timmana
+  fontNames:
+  - Timmana
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: d17926e0435ed4d428a6155fa1726a87
+timeCreated: 1491161282
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Sarpanch
+  fontNames:
+  - Sarpanch
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 335de583dcad36141b4c44b29de1960f, type: 3}
+  - {fileID: 12800000, guid: 6a725e052ae452a4c90f95a7fd91c2a2, type: 3}
+  - {fileID: 12800000, guid: b6372d58f1fec5d45be53224167c7808, type: 3}
+  - {fileID: 12800000, guid: 683b75fa8933d754eaf15113a7cdc2dc, type: 3}
+  - {fileID: 12800000, guid: a485651c526821d428eaee05d3f509eb, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

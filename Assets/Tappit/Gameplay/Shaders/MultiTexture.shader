@@ -49,12 +49,12 @@
 			//fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			
 			// move the blended thexute offset
-			float2 distScroll = float2(_Time.x * _moveSpeedX, _Time.x * _moveSpeedY);
+			float2 offset = float2(_Time.x * _moveSpeedX, _Time.x * _moveSpeedY);
 
 
 			// Blend the color of the main texture with the blended texture
 			fixed blendAlpha = _BlendAlpha * tex2D(_BlendMask, IN.uv_MainTex).a;
-			fixed4 c = (tex2D(_MainTex, IN.uv_MainTex) * _Color + blendAlpha * tex2D(_BlendTex, IN.uv_MainTex + distScroll)) * _BlendColor;
+			fixed4 c = (tex2D(_MainTex, IN.uv_MainTex) * _Color + blendAlpha * tex2D(_BlendTex, IN.uv_MainTex + offset)) * _BlendColor;
 			o.Albedo = c.rgb;
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
