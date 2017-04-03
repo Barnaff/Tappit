@@ -620,7 +620,7 @@ namespace Kobapps
                     writer.WriteLine("        /// <summary>");
                     writer.WriteLine("        /// Bundle Identifier");
                     writer.WriteLine("        /// </summary>");
-                    writer.WriteLine("        public const string BundleIdentifier = \"{0}\";", PlayerSettings.bundleIdentifier);
+                    writer.WriteLine("        public const string BundleIdentifier = \"{0}\";", PlayerSettings.applicationIdentifier);
                 }
 
                 if (settings.GenerateBundleVersion)
