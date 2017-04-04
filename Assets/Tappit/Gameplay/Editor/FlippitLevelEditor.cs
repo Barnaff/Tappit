@@ -27,6 +27,8 @@ public class FlippitLevelEditor : EditorWindow {
 	private Color _backColor = Color.green;
 	private int _tileDisplaySize = 40;
 
+    private bool _markMoves = false;
+
 	#endregion
 
 
@@ -63,35 +65,39 @@ public class FlippitLevelEditor : EditorWindow {
 				DrawMenuPanel();
 
 
-				if (_selectedLevel.BoardSize != null  && _selectedLevel.BoardSetup.Count == (_selectedLevel.BoardSize.x * _selectedLevel.BoardSize.y))
+				if (_selectedLevel != null && _selectedLevel.BoardSize != null  && _selectedLevel.BoardSetup.Count == (_selectedLevel.BoardSize.x * _selectedLevel.BoardSize.y))
 				{
 					// level editor
 					DrawLevelsEditorPanel();
 				}
 				else
 				{
-					if (_selectedLevel.BoardSetup == null)
-					{
-						_selectedLevel.BoardSetup = new List<TileDefenition>();
-					}
+                    if (_selectedLevel != null)
+                    {
+                        if (_selectedLevel.BoardSetup == null)
+                        {
+                            _selectedLevel.BoardSetup = new List<TileDefenition>();
+                        }
 
-					List<TileDefenition> tiles = new List<TileDefenition>();
-					for (int x =0; x < _selectedLevel.BoardSize.x; x++)
-					{
-						for (int y = 0; y < _selectedLevel.BoardSize.y; y++)
-						{
-							TileDefenition tile = GetTileAtPosition(new Vector2(x,y));
-							if (tile == null)
-							{
-								tile = new TileDefenition();
-								tile.Position = new Vector2(x,y);
-								tile.IsFlipped = false;
-							}
-							tiles.Add(tile);
-						}
+                        List<TileDefenition> tiles = new List<TileDefenition>();
+                        for (int x = 0; x < _selectedLevel.BoardSize.x; x++)
+                        {
+                            for (int y = 0; y < _selectedLevel.BoardSize.y; y++)
+                            {
+                                TileDefenition tile = GetTileAtPosition(new Vector2(x, y));
+                                if (tile == null)
+                                {
+                                    tile = new TileDefenition();
+                                    tile.Position = new Vector2(x, y);
+                                    tile.IsFlipped = false;
+                                }
+                                tiles.Add(tile);
+                            }
 
-					}
-					_selectedLevel.BoardSetup = tiles;
+                        }
+                        _selectedLevel.BoardSetup = tiles;
+                    }
+					
 				}
 			}
 			EditorGUILayout.EndVertical();
@@ -102,6 +108,7 @@ public class FlippitLevelEditor : EditorWindow {
 		}
 		EditorGUILayout.EndHorizontal();
 
+       
 	}
 
 	#endregion
@@ -148,7 +155,7 @@ public class FlippitLevelEditor : EditorWindow {
 
 	private void DrawMenuPanel()
 	{
-		EditorGUILayout.BeginHorizontal("Box", GUILayout.Width(200));
+		EditorGUILayout.BeginHorizontal("Box");
 		{
 			if (_selectedLevel != null)
 			{
@@ -191,11 +198,38 @@ public class FlippitLevelEditor : EditorWindow {
 							{
 								int saveIndex = _levelsReordableList.index;
 								_levels[saveIndex] = _selectedLevel.Copy();
+
+                                LevelsSettigs.Instance.Levels = _levels;
+
+                                EditorUtility.SetDirty(LevelsSettigs.Instance);
+
+                                Debug.Log("saved");
 							}
 
 						}
 					}
 					EditorGUILayout.EndHorizontal();
+
+                    EditorGUILayout.BeginHorizontal("Box");
+                    {
+                        _selectedLevel.Stars3Steps = EditorGUILayout.IntField(_selectedLevel.Stars3Steps);
+                        _selectedLevel.Stars2Steps = EditorGUILayout.IntField(_selectedLevel.Stars2Steps);
+                        _selectedLevel.Stars1Steps = EditorGUILayout.IntField(_selectedLevel.Stars1Steps); 
+                        if (GUILayout.Button("Auto Set"))
+                        {
+                            int movesCount = _selectedLevel.Steps.Count;
+                            _selectedLevel.Stars3Steps = movesCount;
+                            _selectedLevel.Stars2Steps = Mathf.RoundToInt(movesCount * 1.8f);
+                            _selectedLevel.Stars1Steps = _selectedLevel.Stars2Steps + movesCount;
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        _markMoves = EditorGUILayout.Toggle("Show Moves", _markMoves);
+                    }
+                    EditorGUILayout.EndHorizontal();
 
 				}
 				EditorGUILayout.EndVertical();
@@ -217,101 +251,118 @@ public class FlippitLevelEditor : EditorWindow {
 					if (_selectedLevel.BoardSetup != null && _selectedLevel.BoardSetup.Count > 0)
 					{
 						int tileCount = 0;
-						for (int i = _selectedLevel.BoardSetup.Count - 1; i >= 0 ; i--)
-						{
-							if (tileCount == 0)
-							{
-								GUILayout.BeginHorizontal("Box");
-							}
+
+                        for (int y = (int)_selectedLevel.BoardSize.y -1 ; y >= 0 ; y-- )  
+                        {
+                            for (int x = 0; x < _selectedLevel.BoardSize.x; x++)
+                            {
+                                TileDefenition tileDefenition = GetTileAtPosition(new Vector2(x, y));
+
+                                if (tileCount == 0)
+                                {
+                                    GUILayout.BeginHorizontal();
+                                }
+
+                                if (_markMoves && _selectedLevel.Steps.Contains(tileDefenition.Position))
+                                {
+                                    GUI.color = Color.magenta;
+                                }
+
+                                EditorGUILayout.BeginVertical("Box");
+                                {
 
 
-							TileDefenition tileDefenition = _selectedLevel.BoardSetup[i];
+                                    if (tileDefenition.IsFlipped)
+                                    {
+                                        GUI.color = _backColor;
+                                    }
+                                    else if (tileDefenition.TileType == eTileType.Empty)
+                                    {
+                                        GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                                    }
+                                    else
+                                    {
+                                        GUI.color = _frontColor;
+                                    }
 
-							if (tileDefenition.IsFlipped)
-							{
-								GUI.color = _backColor;
-							}
-							else if (tileDefenition.TileType == eTileType.Empty)
-							{
-								GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-							}
-							else
-							{
-								GUI.color = _frontColor;
-							}
+                                    string label = "";
+                                    switch (tileDefenition.TileType)
+                                    {
+                                        case eTileType.Normal:
+                                            {
+                                                label = "";
+                                                break;
+                                            }
+                                        case eTileType.Empty:
+                                            {
+                                                break;
+                                            }
+                                        case eTileType.LineHorizontal:
+                                            {
+                                                label = "⇔";
+                                                break;
+                                            }
+                                        case eTileType.LineVertial:
+                                            {
+                                                label = "⇕";
+                                                break;
+                                            }
+                                    }
 
-							string label = "";
-							switch (tileDefenition.TileType)
-							{
-							case eTileType.Normal:
-								{
-									label = "";
-									break;
-								}
-							case eTileType.Empty:
-								{
-									break;
-								}
-							case eTileType.LineHorizontal:
-								{
-									label = "⇔";
-									break;
-								}
-							case eTileType.LineVertial:
-								{
-									label = "⇕";
-									break;
-								}
-							}
+                                    if (GUILayout.Button(label, GUILayout.Width(_tileDisplaySize), GUILayout.Height(_tileDisplaySize)))
+                                    {
+                                        if (Event.current.button == 0)
+                                        {
+                                            Flip(tileDefenition);
+                                        }
+                                        else if (Event.current.button == 1)
+                                        {
 
-							if (GUILayout.Button(label , GUILayout.Width(_tileDisplaySize), GUILayout.Height(_tileDisplaySize)))
-							{
-								if (Event.current.button == 0)
-								{
-									Flip(tileDefenition);
-								}
-								else if (Event.current.button == 1)
-								{
+                                            GenericMenu menu = new GenericMenu();
+                                            menu.AddItem(new GUIContent("Normal"), true, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.Normal;
+                                            });
+                                            menu.AddItem(new GUIContent("Empty"), true, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.Empty;
+                                            });
+                                            menu.AddSeparator("");
+                                            menu.AddItem(new GUIContent("Special/Horizontal"), true, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.LineHorizontal;
+                                            });
+                                            menu.AddItem(new GUIContent("Special/Vertical"), true, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.LineVertial;
+                                            });
+                                            menu.AddItem(new GUIContent("Special/Locked"), true, () =>
+                                            {
 
-									GenericMenu menu = new GenericMenu();
-									menu.AddItem(new GUIContent("Normal"), true, ()=>
-										{
-											tileDefenition.TileType = eTileType.Normal;
-										});
-									menu.AddItem(new GUIContent("Empty"), true, ()=>
-										{
-											tileDefenition.TileType = eTileType.Empty;
-										});
-									menu.AddSeparator("");
-									menu.AddItem(new GUIContent("Special/Horizontal"), true, ()=>
-										{
-											tileDefenition.TileType = eTileType.LineHorizontal;
-										});
-									menu.AddItem(new GUIContent("Special/Vertical"), true, ()=>
-										{
-											tileDefenition.TileType = eTileType.LineVertial;
-										});
-									menu.AddItem(new GUIContent("Special/Locked"), true, ()=>
-										{
-											
-										});
-									menu.ShowAsContext();
-									Event.current.Use();
-								}
-							}
+                                            });
+                                            menu.ShowAsContext();
+                                            Event.current.Use();
+                                        }
+                                    }
 
-							GUI.color = Color.white;
 
-							if (tileCount == _selectedLevel.BoardSize.x - 1)
-							{
-								GUILayout.EndHorizontal();
-								tileCount = 0;
-							}
-							else
-							{
-								tileCount++;
-							}
-						}
+
+                                }
+                                EditorGUILayout.EndVertical();
+
+                                GUI.color = Color.white;
+
+                                if (tileCount == _selectedLevel.BoardSize.x - 1)
+                                {
+                                    GUILayout.EndHorizontal();
+                                    tileCount = 0;
+                                }
+                                else
+                                {
+                                    tileCount++;
+                                }
+                            }
+                        }
 					}
 
 
@@ -353,13 +404,15 @@ public class FlippitLevelEditor : EditorWindow {
 
 	private void Flip(TileDefenition tile)
 	{
-		List <TileDefenition> flippedTiles = new List<TileDefenition>();
+		List <TileDefenition> tilesToFlip = new List<TileDefenition>();
 
-		flippedTiles.Add(tile);
+        tilesToFlip.Add(tile);
 
-		flippedTiles.AddRange(GetAdjacentTiles(tile.Position));
+        tilesToFlip.AddRange(GetAdjacentTiles(tile.Position));
 
-		foreach (TileDefenition flippedTile in flippedTiles)
+        while (AddSpecialTiles(tilesToFlip));
+
+        foreach (TileDefenition flippedTile in tilesToFlip)
 		{
 			if (flippedTile != null)
 			{
@@ -388,6 +441,62 @@ public class FlippitLevelEditor : EditorWindow {
 
 		return adjacentTiles;
 	}
+
+    private bool AddSpecialTiles(List<TileDefenition> tilesToFlip)
+    {
+        List<TileDefenition> tilesToAdd = new List<TileDefenition>();
+
+        foreach (TileDefenition flippingTile in tilesToFlip)
+        {
+            if (flippingTile != null)
+            {
+                switch (flippingTile.TileType)
+                {
+                    case eTileType.Empty:
+                    case eTileType.Normal:
+                        {
+                            break;
+                        }
+                    case eTileType.LineVertial:
+                        {
+                            foreach (TileDefenition tile in _selectedLevel.BoardSetup)
+                            {
+                                if (tile.Position.x == flippingTile.Position.x)
+                                {
+                                    if (!tilesToFlip.Contains(tile))
+                                    {
+                                        tilesToAdd.Add(tile);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case eTileType.LineHorizontal:
+                        {
+                            foreach (TileDefenition tile in _selectedLevel.BoardSetup)
+                            {
+                                if (tile.Position.y == flippingTile.Position.y)
+                                {
+                                    if (!tilesToFlip.Contains(tile))
+                                    {
+                                        tilesToAdd.Add(tile);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                }
+            }
+           
+        }
+
+        if (tilesToAdd.Count > 0)
+        {
+            tilesToFlip.AddRange(tilesToAdd);
+        }
+
+        return (tilesToAdd.Count > 0);
+    }
 
 	private TileDefenition GetTileAtPosition(Vector2 position)
 	{
