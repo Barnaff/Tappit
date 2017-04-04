@@ -25,16 +25,24 @@ public class LevelDefenition
 		copy.ChecpterID = ChecpterID;
 		copy.BoardSize = new Vector2(BoardSize.x, BoardSize.y);
 
-		copy.Steps = new List<Vector2>();
-		foreach (Vector2 step in Steps)
+		if (Steps != null)
 		{
-			copy.Steps.Add(new Vector2(step.x, step.y));
+			copy.Steps = new List<Vector2>();
+			foreach (Vector2 step in Steps)
+			{
+				copy.Steps.Add(new Vector2(step.x, step.y));
+			}
 		}
-		copy.BoardSetup = new List<TileDefenition>();
-		foreach (TileDefenition tile in BoardSetup)
+
+		if (BoardSetup != null)
 		{
-			copy.BoardSetup.Add(tile.Copy());
+			copy.BoardSetup = new List<TileDefenition>();
+			foreach (TileDefenition tile in BoardSetup)
+			{
+				copy.BoardSetup.Add(tile.Copy());
+			}
 		}
+
 		copy.Stars1Steps = Stars1Steps;
 		copy.Stars2Steps = Stars2Steps;
 		copy.Stars3Steps = Stars3Steps;

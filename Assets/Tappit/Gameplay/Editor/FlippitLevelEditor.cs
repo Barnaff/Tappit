@@ -140,6 +140,24 @@ public class FlippitLevelEditor : EditorWindow {
 						_selectedLevel = _levels[list.index].Copy();
 						_movesReordableList = null;
 					};
+
+					_levelsReordableList.onAddCallback = (list)=>
+					{
+						LevelDefenition newLevel = new LevelDefenition();
+						newLevel.Steps = new List<Vector2>();
+						newLevel.BoardSetup = new List<TileDefenition>();
+						newLevel.LevelID = list.count + 1;
+						_levels.Add(newLevel);
+					};
+
+					_levelsReordableList.onReorderCallback = (list)=>
+					{
+						for (int i =0; i< _levels.Count; i++)
+						{
+							LevelDefenition level = _levels[i];
+							level.LevelID = i + 1;
+						}
+					};
 				}
 
 				if (_levelsReordableList != null)
