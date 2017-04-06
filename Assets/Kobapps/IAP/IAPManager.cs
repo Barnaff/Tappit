@@ -21,10 +21,13 @@ public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
             return;
         }
 
+		Debug.Log("Iniitalizing IAP");
+
         ConfigurationBuilder builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
         foreach (IAPProduct product in products)
         {
+			Debug.Log("add product: " + product.Identifier + " >> " + product.IOSIdentifier);
             builder.AddProduct(product.Identifier, product.ProductType, new IDs(){
                 { product.IOSIdentifier, AppleAppStore.Name },
                 { product.AndroidIdntifier, GooglePlay.Name },
@@ -89,6 +92,12 @@ public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
 
         // Overall Purchasing system, configured with products for this application.
         _storeController = controller;
+
+		foreach (Product product in _storeController.products.all)
+		{
+			Debug.Log("Got product: " + product.definition.id + " data: "  + product.metadata.ToString());
+		}
+
         // Store specific subsystem, for accessing device-specific store features.
         _storeExtensionProvider = extensions;
     }
