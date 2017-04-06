@@ -86,20 +86,15 @@ public class GamePausedPopupController : PopupBaseController {
 
     public void PlayAgainButtonAction()
     {
-        DisplayCloseAnimation(() =>
+        ClosePopup(()=>
         {
             FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
-
-            ClosePopup();
         });
     }
 
     public void ResumeButtonAction()
     {
-        DisplayCloseAnimation(() =>
-        {
-            ClosePopup();
-        });
+        ClosePopup();
     }
 
     public void AudioToggleButtonAction()
@@ -110,6 +105,22 @@ public class GamePausedPopupController : PopupBaseController {
     public void MusicToggleButtonAction()
     {
         AccountManager.Instance.MusicToggle = _musicToggleButton.isOn;
+    }
+
+    #endregion
+
+
+    #region PopupBaseController Subclassing
+
+    protected override void DisplayPopupCloseAnimation(System.Action completionAction)
+    {
+        DisplayCloseAnimation(() =>
+        {
+            if (completionAction != null)
+            {
+                completionAction();
+            }
+        });
     }
 
     #endregion

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class LevelSelectionController : MenuScreenBaseController {
+public class LevelSelectionController : MenuScreenBaseController, IBackButtonListener {
 
     #region Private Properties
 
@@ -56,6 +56,21 @@ public class LevelSelectionController : MenuScreenBaseController {
     #endregion
 
 
+    #region Lifecycle
+
+    void OnEnable()
+    {
+        BackButtonManager.Instance.RegisterListener(this);
+    }
+
+    void OnDisable()
+    {
+        BackButtonManager.Instance.RemoveListener(this);
+    }
+
+    #endregion
+
+
     #region Public
 
     public void BackButtonAction()
@@ -89,6 +104,21 @@ public class LevelSelectionController : MenuScreenBaseController {
     public override void Show()
     {
         base.Show();
+    }
+
+    public override void Hide()
+    {
+        base.Hide();
+    }
+
+    #endregion
+
+
+    #region IBackButtonListener Implementation
+
+    public void BackButtonCallback()
+    {
+        BackButtonAction();
     }
 
     #endregion

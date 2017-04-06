@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
-public class GameplayUIController : MonoBehaviour {
+public class GameplayUIController : MonoBehaviour, IBackButtonListener {
 
     #region Public Properties
 
@@ -56,11 +56,15 @@ public class GameplayUIController : MonoBehaviour {
         canvasGroup.alpha = 0f;
 
         AccountManager.Instance.OnHintsCountUpdated += OnHintsCountUpdatedHandler;
+
+        BackButtonManager.Instance.RegisterListener(this);
     }
 
     void OnDestroy()
     {
         AccountManager.Instance.OnHintsCountUpdated -= OnHintsCountUpdatedHandler;
+
+        BackButtonManager.Instance.RemoveListener(this);
     }
 
     #endregion
@@ -129,6 +133,7 @@ public class GameplayUIController : MonoBehaviour {
                 {
                     OnGameResumed();
                 }
+                BackButtonManager.Instance.RegisterListener(this);
             });
         }
 	}
@@ -244,6 +249,16 @@ public class GameplayUIController : MonoBehaviour {
     private void OnHintsCountUpdatedHandler()
     {
         UpdateHintsView();
+    }
+
+    #endregion
+
+
+    #region IBackButtonListener Implementation
+
+    public void BackButtonCallback()
+    {
+        PauseButtonAction();
     }
 
     #endregion

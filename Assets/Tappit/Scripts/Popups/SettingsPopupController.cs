@@ -96,9 +96,22 @@ public class SettingsPopupController : PopupBaseController
 
     public void CloseButtonAction()
     {
+        ClosePopup();
+    }
+
+    #endregion
+
+
+    #region PopupBaseController Subclassing
+
+    protected override void DisplayPopupCloseAnimation(System.Action completionAction)
+    {
         DisplayCloseAnimation(() =>
         {
-            ClosePopup();
+            if (completionAction != null)
+            {
+                completionAction();
+            }
         });
     }
 

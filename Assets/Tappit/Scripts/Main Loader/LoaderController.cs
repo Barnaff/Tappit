@@ -29,6 +29,10 @@ public class LoaderController : MonoBehaviour {
 
         yield return 0f;
 
+        BackButtonManager.Instance.Init();
+
+        yield return 0f;
+
         FlowManager.Instance.FirstScreen();
     }
 

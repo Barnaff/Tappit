@@ -102,7 +102,7 @@ public class PopupsManager : Kobapps.Singleton<PopupsManager> {
 }
 
 
-public class PopupBaseController : MonoBehaviour
+public class PopupBaseController : MonoBehaviour, IBackButtonListener
 {
     #region Private Properties
 
@@ -123,9 +123,24 @@ public class PopupBaseController : MonoBehaviour
     private System.Action <PopupBaseController> _onPopupRemoved;
 
     #endregion
-     
-    void OnDestory()
+
+
+    #region Lifecycle
+
+    void OnEnable()
     {
+        if (_closeOnBackButton)
+        {
+            BackButtonManager.Instance.RegisterListener(this);
+        }
+    }
+
+    void OnDisable()
+    {
+        if (_closeOnBackButton)
+        {
+            BackButtonManager.Instance.RemoveListener(this);
+        }
         if (_onPopupRemoved != null)
         {
             _onPopupRemoved(this);
@@ -133,20 +148,43 @@ public class PopupBaseController : MonoBehaviour
         }
     }
 
+    #endregion
+
+
     #region Public
 
-    public void ClosePopup()
+    protected virtual void DisplayPopupCloseAnimation(System.Action completionAction)
     {
-        if (_closePopupAction != null)
+        if (completionAction != null)
         {
-            _closePopupAction();
+            completionAction();
         }
-        if (_onPopupRemoved != null)
+    }
+
+    #endregion
+
+
+    #region Public
+
+    public void ClosePopup(System.Action closeAction = null)
+    {
+        DisplayPopupCloseAnimation(()=>
         {
-            _onPopupRemoved(this);
-            _onPopupRemoved = null;
-        }
-        Destroy(this.gameObject);
+            if (_closePopupAction != null)
+            {
+                _closePopupAction();
+            }
+            if (closeAction != null)
+            {
+                closeAction();
+            }
+            if (_onPopupRemoved != null)
+            {
+                _onPopupRemoved(this);
+                _onPopupRemoved = null;
+            }
+            Destroy(this.gameObject);
+        });
     }
 
     public System.Action OnCloseAction
@@ -176,6 +214,11 @@ public class PopupBaseController : MonoBehaviour
     public void SetCloseAction(System.Action closePopupAction)
     {
         _closePopupAction = closePopupAction;
+    }
+
+    public void BackButtonCallback()
+    {
+        ClosePopup();
     }
 
     #endregion

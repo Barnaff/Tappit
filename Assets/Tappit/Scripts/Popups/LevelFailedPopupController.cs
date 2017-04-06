@@ -77,14 +77,28 @@ public class LevelFailedPopupController : PopupBaseController {
 
 	public void PlayAgainButtonAction()
 	{
-        DisplayCloseAnimation(() =>
+        ClosePopup(() =>
         {
             FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
-
-            ClosePopup();
         });
-	}
+    }
 
-	#endregion
+    #endregion
+
+
+    #region PopupBaseController Subclassing
+
+    protected override void DisplayPopupCloseAnimation(System.Action completionAction)
+    {
+        DisplayCloseAnimation(() =>
+        {
+            if (completionAction != null)
+            {
+                completionAction();
+            }
+        });
+    }
+
+    #endregion
 
 }

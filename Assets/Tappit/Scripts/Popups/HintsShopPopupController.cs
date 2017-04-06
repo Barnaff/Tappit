@@ -56,10 +56,7 @@ public class HintsShopPopupController : PopupBaseController {
 
     public void CloseButtonAction()
     {
-        DisplayCloseAnimation(()=>
-        {
-            ClosePopup();
-        });
+        ClosePopup();
     }
 
     #endregion
@@ -70,10 +67,7 @@ public class HintsShopPopupController : PopupBaseController {
     private void AddHints(int amount)
     {
         AccountManager.Instance.AddHints(amount);
-        DisplayCloseAnimation(() =>
-        {
-            ClosePopup();
-        });
+        ClosePopup();
     }
 
     private void PopulateShop()
@@ -162,6 +156,21 @@ public class HintsShopPopupController : PopupBaseController {
             if (sucsess)
             {
                 AddHints(shopItem.Amount);
+            }
+        });
+    }
+
+    #endregion
+
+    #region PopupBaseController Subclassing
+
+    protected override void DisplayPopupCloseAnimation(System.Action completionAction)
+    {
+        DisplayCloseAnimation(() =>
+        {
+            if (completionAction != null)
+            {
+                completionAction();
             }
         });
     }

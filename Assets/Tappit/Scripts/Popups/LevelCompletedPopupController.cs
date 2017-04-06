@@ -148,12 +148,10 @@ public class LevelCompletedPopupController : PopupBaseController {
 
     public void NextLevelButtonAction()
     {
-        DisplayCloseAnimation(()=>
+        ClosePopup(()=>
         {
             FlowManager.Instance.NextLevel();
-            ClosePopup();
         });
-       
     }
 
     public void MenuButtonAction()
@@ -163,12 +161,28 @@ public class LevelCompletedPopupController : PopupBaseController {
 
     public void PlayAgainButtonAction()
     {
-        DisplayCloseAnimation(() =>
+        ClosePopup(()=>
         {
             FlowManager.Instance.StartLevel(GameSetupManager.Instance.SelectedLevel);
-            ClosePopup();
         });
     }
 
     #endregion
+
+    #region PopupBaseController Subclassing
+
+    protected override void DisplayPopupCloseAnimation(System.Action completionAction)
+    {
+        DisplayCloseAnimation(() =>
+        {
+            if (completionAction != null)
+            {
+                completionAction();
+            }
+        });
+    }
+
+    #endregion
+
+
 }
