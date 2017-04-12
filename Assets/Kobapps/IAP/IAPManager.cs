@@ -5,16 +5,27 @@ using UnityEngine.Purchasing;
 
 public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
 {
-
-    private static IStoreController _storeController;          // The Unity Purchasing system.
-
-    private static IExtensionProvider _storeExtensionProvider; // The store-specific Purchasing subsystems.
-
-    private bool _isInitialized;
+    #region Public Properties
 
     public delegate void PurchaseCompletionDelegate(bool sucsess);
 
-	public void InitIAP(List<IAPProduct> products)
+    #endregion
+
+
+    #region Private Properties
+
+    private IStoreController _storeController;          // The Unity Purchasing system.
+
+    private IExtensionProvider _storeExtensionProvider; // The store-specific Purchasing subsystems.
+
+    private bool _isInitialized;
+
+    #endregion
+
+
+    #region Public
+
+    public void InitIAP(List<IAPProduct> products)
     {
         if (IsInitialized())
         {
@@ -70,6 +81,17 @@ public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
         }
     }
 
+    public string GetProductPrice(string productIdentifier)
+    {
+        Product product = _storeController.products.WithID(productIdentifier);
+        if (product != null)
+        {
+            return product.metadata.localizedPriceString;
+        }
+        return "";
+    }
+
+    #endregion
 
 
     #region Private
@@ -100,6 +122,7 @@ public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
 
         // Store specific subsystem, for accessing device-specific store features.
         _storeExtensionProvider = extensions;
+
     }
 
     void IStoreListener.OnInitializeFailed(InitializationFailureReason error)
@@ -115,15 +138,19 @@ public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
         Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
     }
 
-    PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs args)
+    PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs purchaseEvent)
     {
-        string productId = args.purchasedProduct.definition.id;
+        if (purchaseEvent.purchasedProduct != null)
+        {
+            string productId = purchaseEvent.purchasedProduct.definition.id;
 
-        Debug.Log("ProcessPurchase: SUCSESS. product: " + productId + ".");
+            Debug.Log("ProcessPurchase: SUCSESS. product: " + productId + ".");
 
-        // Return a flag indicating whether this product has completely been received, or if the application needs 
-        // to be reminded of this purchase at next app launch. Use PurchaseProcessingResult.Pending when still 
-        // saving purchased products to the cloud, and when that save is delayed. 
+            // Return a flag indicating whether this product has completely been received, or if the application needs 
+            // to be reminded of this purchase at next app launch. Use PurchaseProcessingResult.Pending when still 
+            // saving purchased products to the cloud, and when that save is delayed. 
+           
+        }
         return PurchaseProcessingResult.Complete;
     }
 

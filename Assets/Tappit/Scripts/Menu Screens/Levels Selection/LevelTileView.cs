@@ -43,8 +43,6 @@ public class LevelTileView : MonoBehaviour {
     {
         _levelLabel.text = levelID.ToString();
 
-        
-
         if (isSelected)
         {
             Debug.Log("selected level " + levelID);
