@@ -36,6 +36,9 @@ public class LevelCompletedPopupController : PopupBaseController {
     [SerializeField]
     private SoundResource _starShineSouneEffect;
 
+    [SerializeField]
+    private GameObject _nextLevelButton;
+
     #endregion
 
 
@@ -48,7 +51,9 @@ public class LevelCompletedPopupController : PopupBaseController {
         {
             canvas.worldCamera = Camera.main;
         }
-        _levelLabel.text = GameSetupManager.Instance.SelectedLevel.ChecpterID.ToString() + " - " + GameSetupManager.Instance.SelectedLevel.LevelID.ToString();
+        _levelLabel.text =  GameSetupManager.Instance.SelectedLevel.LevelID.ToString();
+
+        _nextLevelButton.transform.DOShakeScale(1f, 0.1f).SetDelay(2.0f).SetLoops(-1);
     }
 
     #endregion

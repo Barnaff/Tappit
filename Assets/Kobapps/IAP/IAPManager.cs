@@ -135,7 +135,7 @@ public class IAPManager : Kobapps.Singleton<IAPManager>, IStoreListener
     {
         // A product purchase attempt did not succeed. Check failureReason for more detail. Consider sharing 
         // this reason with the user to guide their troubleshooting actions.
-        Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
+        Debug.Log(string.Format("OnPurchaseF ailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
     }
 
     PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs purchaseEvent)
