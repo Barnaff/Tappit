@@ -362,6 +362,11 @@ public class FlippitLevelEditor : EditorWindow {
                                         {
 
                                             GenericMenu menu = new GenericMenu();
+                                            menu.AddItem(new GUIContent("Is Fliped"), tileDefenition.IsFlipped, () =>
+                                            {
+                                                tileDefenition.IsFlipped = !tileDefenition.IsFlipped;
+                                            });
+                                            menu.AddSeparator("");
                                             menu.AddItem(new GUIContent("Normal"), tileDefenition.TileType == eTileType.Normal, () =>
                                             {
                                                 tileDefenition.TileType = eTileType.Normal;
