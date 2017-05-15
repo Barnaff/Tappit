@@ -82,6 +82,11 @@ public class TileController : MonoBehaviour {
             {
                 case eTileType.LineHorizontal:
                 case eTileType.LineVertial:
+                case eTileType.Locked:
+                case eTileType.LinkA:
+                case eTileType.LinkB:
+                case eTileType.LinkC:
+                case eTileType.LinkD:
                     {
                         SetTileIndicator(_tileDefenition.TileType);
                         break;

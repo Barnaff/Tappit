@@ -182,6 +182,20 @@ public class BoardController : MonoBehaviour {
                         }
                         break;
                     }
+                case eTileType.LinkA:
+                case eTileType.LinkB:
+                case eTileType.LinkC:
+                case eTileType.LinkD:
+                    {
+                        foreach (TileController tile in _boardTiles)
+                        {
+                            if (tile.TileDefenition.TileType == flippingTile.TileDefenition.TileType && !tilesToFlip.Contains(tile))
+                            {
+                                tilesToAdd.Add(tile);
+                            }
+                        }
+                        break;
+                    }
             }
         }
 

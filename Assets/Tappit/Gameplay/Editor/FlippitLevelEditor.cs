@@ -325,6 +325,31 @@ public class FlippitLevelEditor : EditorWindow {
                                                 label = "⇕";
                                                 break;
                                             }
+                                        case eTileType.Locked:
+                                            {
+                                                label = "L";
+                                                break;
+                                            }
+                                        case eTileType.LinkA:
+                                            {
+                                                label = "A";
+                                                break;
+                                            }
+                                        case eTileType.LinkB:
+                                            {
+                                                label = "B";
+                                                break;
+                                            }
+                                        case eTileType.LinkC:
+                                            {
+                                                label = "C";
+                                                break;
+                                            }
+                                        case eTileType.LinkD:
+                                            {
+                                                label = "D";
+                                                break;
+                                            }
                                     }
 
                                     if (GUILayout.Button(label, GUILayout.Width(_tileDisplaySize), GUILayout.Height(_tileDisplaySize)))
@@ -337,26 +362,47 @@ public class FlippitLevelEditor : EditorWindow {
                                         {
 
                                             GenericMenu menu = new GenericMenu();
-                                            menu.AddItem(new GUIContent("Normal"), true, () =>
+                                            menu.AddItem(new GUIContent("Normal"), tileDefenition.TileType == eTileType.Normal, () =>
                                             {
                                                 tileDefenition.TileType = eTileType.Normal;
                                             });
-                                            menu.AddItem(new GUIContent("Empty"), true, () =>
+                                            menu.AddItem(new GUIContent("Empty"), tileDefenition.TileType == eTileType.Empty, () =>
                                             {
                                                 tileDefenition.TileType = eTileType.Empty;
                                             });
                                             menu.AddSeparator("");
-                                            menu.AddItem(new GUIContent("Special/Horizontal"), true, () =>
+                                            menu.AddItem(new GUIContent("Special/Horizontal"), tileDefenition.TileType == eTileType.LineHorizontal, () =>
                                             {
                                                 tileDefenition.TileType = eTileType.LineHorizontal;
                                             });
-                                            menu.AddItem(new GUIContent("Special/Vertical"), true, () =>
+                                            menu.AddItem(new GUIContent("Special/Vertical"), tileDefenition.TileType == eTileType.LineVertial, () =>
                                             {
                                                 tileDefenition.TileType = eTileType.LineVertial;
                                             });
-                                            menu.AddItem(new GUIContent("Special/Locked"), true, () =>
+                                            menu.AddItem(new GUIContent("Special/Locked"), tileDefenition.TileType == eTileType.Locked, () =>
                                             {
-
+                                                tileDefenition.TileType = eTileType.Locked;
+                                            });
+                                            menu.AddItem(new GUIContent("Special/Linked/A"), tileDefenition.TileType == eTileType.LinkA, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.LinkA;
+                                            });
+                                            menu.AddItem(new GUIContent("Special/Linked/B"), tileDefenition.TileType == eTileType.LinkB, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.LinkB;
+                                            });
+                                            menu.AddItem(new GUIContent("Special/Linked/C"), tileDefenition.TileType == eTileType.LinkC, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.LinkC;
+                                            });
+                                            menu.AddItem(new GUIContent("Special/Linked/D"), tileDefenition.TileType == eTileType.LinkD, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.LinkD;
+                                            });
+                                            menu.AddSeparator("");
+                                            menu.AddItem(new GUIContent("Clear"), false, () =>
+                                            {
+                                                tileDefenition.TileType = eTileType.Normal;
                                             });
                                             menu.ShowAsContext();
                                             Event.current.Use();
@@ -499,6 +545,20 @@ public class FlippitLevelEditor : EditorWindow {
                                     {
                                         tilesToAdd.Add(tile);
                                     }
+                                }
+                            }
+                            break;
+                        }
+                    case eTileType.LinkA:
+                    case eTileType.LinkB:
+                    case eTileType.LinkC:
+                    case eTileType.LinkD:
+                        {
+                            foreach (TileDefenition tile in _selectedLevel.BoardSetup)
+                            {
+                                if (tile.TileType == flippingTile.TileType && !tilesToFlip.Contains(tile))
+                                {
+                                    tilesToAdd.Add(tile);
                                 }
                             }
                             break;

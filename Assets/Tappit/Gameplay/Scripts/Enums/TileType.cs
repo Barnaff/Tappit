@@ -5,5 +5,9 @@ public enum eTileType
     Empty,
     LineHorizontal,
     LineVertial,
-
+    LinkA,
+    LinkB,
+    LinkC,
+    LinkD,
+    Locked,
 }
